@@ -7,6 +7,9 @@ class Marker extends Component {
 
     this.createMarker = this.createMarker.bind(this);
     this.checkMarkerPosition = this.checkMarkerPosition.bind(this);
+    this.createEventListener = this.createEventListener.bind(this);
+    this.removeEventListener = this.removeEventListener.bind(this);
+    this.handleMouseOver = this.handleMouseOver.bind(this);
   }
 
   /**
@@ -18,6 +21,15 @@ class Marker extends Component {
   componentDidMount() {
     const { google, map } = this.props;
     this.createMarker();
+  }
+
+  /**
+   * React lifecycle method.
+   * When the component unmounts, remove all event listeners.
+   * @returns {void}
+   */
+  componentWillUnmount() {
+    this.removeEventListener();
   }
 
   /**
@@ -54,6 +66,32 @@ class Marker extends Component {
 
     // set the marker onto the map
     this.marker.setMap(map);
+
+    // create event listener
+    this.createEventListener();
+  }
+
+  /**
+   * Create event listeners for this marker.
+   * @returns {void}
+   */
+  createEventListener() {
+    this.marker.addListener('mouseover', this.handleMouseOver);
+  }
+  /**
+   * Remove event listeners for this marker.
+   * @returns {void}
+   */
+  removeEventListener() {
+    this.marker.addListener('mouseover', this.handleMouseOver);
+  }
+
+  /**
+   * Handles the hover event of this marker.
+   * @returns {void}
+   */
+  handleMouseOver() {
+    console.log('Marker hovered');
   }
 
   /**
