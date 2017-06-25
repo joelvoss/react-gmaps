@@ -3,6 +3,7 @@ import withGoogleMap from './../withGoogleMap';
 import Wrapper from './Wrapper';
 import LoadingOverlay from './../LoadingOverlay';
 import Map from './Map';
+import Marker from './Marker';
 
 class GoogleMap extends Component {
   constructor(props) {
@@ -39,9 +40,9 @@ class GoogleMap extends Component {
       <Wrapper>
         <LoadingOverlay show={!loaded} />
         {
-          loaded && google &&
+          google &&
           <Map google={google}>
-            {/* Todo: Marker */}
+            <Marker lat={51.2419782} lng={7.0937274}/>
           </Map>
         }
       </Wrapper>
