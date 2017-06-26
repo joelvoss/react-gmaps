@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
-import { mockPosition } from './mockPosition';
+import { Component } from 'react';
 
 class Marker extends Component {
   constructor(props) {
     super(props);
 
-    this.createMarker = this.createMarker.bind(this);
-    this.checkMarkerPosition = this.checkMarkerPosition.bind(this);
+    this.renderMarker = this.renderMarker.bind(this);
     this.createEventListener = this.createEventListener.bind(this);
     this.removeEventListener = this.removeEventListener.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
@@ -19,8 +17,14 @@ class Marker extends Component {
    * @returns {void}
    */
   componentDidMount() {
-    const { google, map } = this.props;
-    this.createMarker();
+    this.renderMarker();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.lat !== this.props.lat)
+        || (nextProps.lng !== this.props.lng)) {      
+      this.renderMarker();
+    }
   }
 
   /**
@@ -29,46 +33,28 @@ class Marker extends Component {
    * @returns {void}
    */
   componentWillUnmount() {
+    this.marker.setMap(null);
     this.removeEventListener();
   }
 
   /**
-   * React lifecycle method.
-   * When the component updates, call the checkMarkerPosition method
-   * @param {object} prevProps - Previous props
-   * @param {object} prevState - Previous state
-   */
-  componentDidUpdate(prevProps, prevState) {
-    console.log('Marker: → componentDidUpdate');
-    this.checkMarkerPosition();
-  }
-
-  /**
-   * Create a marker with at a mocked lat/lng position and place it onto the map.
+   * Creates or updates a marker with the given props
    * @returns {void}
    */
-  createMarker() {
+  renderMarker() {
     const { google, map, lat, lng } = this.props;
 
-    let position = {};
-    if (!lat && !lng) {
-      position = mockPosition(google, map);
+    if (!this.marker) {
+      this.marker = new google.maps.Marker({
+        position: { lat, lng },
+        map
+      });
+
+      // create event listener for this marker
+      this.createEventListener();
     } else {
-      position = {
-        lat,
-        lng
-      };
+      this.marker.setPosition({ lat, lng })
     }
-    
-    this.marker = new google.maps.Marker({
-      position: new google.maps.LatLng(position.lat, position.lng)
-    });
-
-    // set the marker onto the map
-    this.marker.setMap(map);
-
-    // create event listener
-    this.createEventListener();
   }
 
   /**
@@ -83,7 +69,7 @@ class Marker extends Component {
    * @returns {void}
    */
   removeEventListener() {
-    this.marker.addListener('mouseover', this.handleMouseOver);
+    this.marker.removeListener('mouseover', this.handleMouseOver);
   }
 
   /**
@@ -91,23 +77,8 @@ class Marker extends Component {
    * @returns {void}
    */
   handleMouseOver() {
-    console.log('Marker hovered');
-  }
-
-  /**
-   * Check if the current marker lies inside our current map bounds.
-   * @returns {void}
-   */
-  checkMarkerPosition() {
-    const { google, map } = this.props;
-    // check if current marker is in the visible bounds
-    const isInBounds = map.getBounds().contains(this.marker.getPosition());
-    
-    // if the marker is not inside the current marker position, move it!
-    if (!isInBounds) {
-      const mockedPosition = mockPosition(google, map);
-      this.marker.setPosition(new google.maps.LatLng(mockedPosition.lat, mockedPosition.lng))
-    }
+    const { id } = this.props;
+    console.log(`Marker ${id} hovered`);
   }
 
   render() {

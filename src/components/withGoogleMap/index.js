@@ -102,7 +102,7 @@ const withGoogleMap = ({ apiKey }) => (WrappedComponent) => {
      */
     render () {
       return (
-        <WrappedComponent {...this.state} />
+        <WrappedComponent {...this.state} {...this.props}/>
       )
     }
   }

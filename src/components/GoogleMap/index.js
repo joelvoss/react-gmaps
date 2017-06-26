@@ -36,13 +36,17 @@ class GoogleMap extends Component {
 
   render() {
     const { loaded, google } = this.state;
+    const { marker } = this.props;
+
     return (
       <Wrapper>
         <LoadingOverlay show={!loaded} />
         {
           google &&
           <Map google={google}>
-            <Marker lat={51.2419782} lng={7.0937274}/>
+            {
+              marker && marker.map(m => <Marker key={m.id} {...m}/>)
+            }
           </Map>
         }
       </Wrapper>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-const Wrapper = styled.div`
+const MapWrapper = styled.div`
   position: absolute;
   left: 0;
   right: 0;
@@ -101,7 +101,7 @@ class Map extends Component {
    * @returns {void}
    */
   removeEventListener() {
-    this.map.addListener('idle', this.handleIdle);
+    this.map.removeListener('idle', this.handleIdle);
   }
 
   /**
@@ -117,11 +117,11 @@ class Map extends Component {
   render() {
     const { children } = this.state;
     return (
-      <Wrapper innerRef={c => this.root = c}>
+      <MapWrapper innerRef={c => this.root = c}>
         {
           children
         }
-      </Wrapper>
+      </MapWrapper>
     );
   }
 }
