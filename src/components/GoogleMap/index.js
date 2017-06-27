@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import withGoogleMap from './../withGoogleMap';
 import Wrapper from './Wrapper';
 import LoadingOverlay from './../LoadingOverlay';
@@ -54,6 +55,14 @@ class GoogleMap extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    marker: state.marker
+  }
+}
+
+const GoogleMapContainer = connect(mapStateToProps)(GoogleMap);
+
 export default withGoogleMap({
   apiKey: 'AIzaSyCej5h4pGqaunT1C8iM9QAle3A8N4Edf8I'
-})(GoogleMap);
+})(GoogleMapContainer);

@@ -1,20 +1,58 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import Wrapper from './Wrapper';
+import Item from './Item';
+
+import * as markerActions from './../../actions/markerActions';
 
 class List extends Component {
+  constructor(props) {
+    super(props);
+
+    this.handleMouseOver = this.handleMouseOver.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+  }
+
+  handleMouseOver(id) {
+    const { actions } = this.props;
+    actions.mouseOverMarker(id);
+  }
+  handleMouseLeave(id) {
+    const { actions } = this.props;
+    actions.mouseLeaveMarker(id);
+  }
+  
   render() {
     const { marker } = this.props;
     return (
-      <ul>
+      <Wrapper>
         {
-          marker && marker.map(m => {
+          marker && marker.map((m, i) => {
             return (
-              <li key={m.id}>Marker <span>{m.id}</span></li>
+              <Item 
+                key={m.id} i={i}
+                hovered={m.hovered}
+                onMouseOver={() => this.handleMouseOver(m.id)}
+                onMouseLeave={() => this.handleMouseLeave(m.id)}
+              >
+                Marker <span>{m.id}</span>
+              </Item>
             )
           })
         }
-      </ul>
+      </Wrapper>
     )
   }
 }
 
-export default List;
+const mapStateToProps = state => {
+  return {
+    marker: state.marker
+  }
+}
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(markerActions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(List);
