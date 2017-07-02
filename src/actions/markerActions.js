@@ -1,15 +1,22 @@
 import * as types from './../constants';
 
-export function mouseOverMarker(id) {
+export function hoverMarker(id) {
   return { 
-    type: types.MOUSEOVER_MARKER,
+    type: types.HOVER_MARKER,
     id
   }
 }
 
-export function mouseLeaveMarker(id) {
+export function unhoverMarker(id) {
   return { 
-    type: types.MOUSELEAVE_MARKER,
+    type: types.UNHOVER_MARKER,
+    id
+  }
+}
+
+export function selectMarker(id) {
+  return { 
+    type: types.SELECT_MARKER,
     id
   }
 }

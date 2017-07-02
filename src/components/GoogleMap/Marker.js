@@ -1,4 +1,8 @@
 import { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import * as markerActions from './../../actions/markerActions';
 
 class Marker extends Component {
   constructor(props) {
@@ -8,6 +12,8 @@ class Marker extends Component {
     this.createEventListener = this.createEventListener.bind(this);
     this.removeEventListener = this.removeEventListener.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
+    this.handleMouseOut = this.handleMouseOut.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   /**
@@ -63,6 +69,8 @@ class Marker extends Component {
    */
   createEventListener() {
     this.marker.addListener('mouseover', this.handleMouseOver);
+    this.marker.addListener('mouseout', this.handleMouseOut);
+    this.marker.addListener('click', this.handleClick);
   }
   /**
    * Remove event listeners for this marker.
@@ -70,15 +78,49 @@ class Marker extends Component {
    */
   removeEventListener() {
     this.marker.removeListener('mouseover', this.handleMouseOver);
+    this.marker.removeListener('mouseout', this.handleMouseOut);
+    this.marker.removeListener('click', this.handleClick);
   }
 
   /**
-   * Handles the hover event of this marker.
+   * Handles the mouseover event of a google maps marker.
    * @returns {void}
    */
   handleMouseOver() {
-    const { id } = this.props;
-    console.log(`Marker ${id} hovered`);
+    const { actions, id } = this.props;
+    actions.hoverMarker(id);
+    this.smoothScrollToElement(id);
+  }
+
+  /**
+   * Handles the mouseleave event of a google maps marker.
+   * @returns {void}
+   */
+  handleMouseOut() {
+    const { actions, id } = this.props;
+    actions.unhoverMarker(id);
+  }
+
+  /**
+   * Handles a cick event on a google maps marker.
+   * @returns {void}
+   */
+  handleClick() {
+    const { actions, id } = this.props;
+    console.log('select marker');
+    actions.selectMarker(id);
+  }
+
+  /**
+   * Smooth scroll to the element with a given id
+   * by querying the DOM for the element with a data-attr attached to it.
+   * Uses the smoothscroll polyfill, see https://github.com/iamdustan/smoothscroll
+   * @param {string} id - The uuidv4 ID of the element to scroll to.
+   * @returns {void}
+   */
+  smoothScrollToElement(id) {
+    const listEl = document.querySelector(`[data-markerItemId="${id}"]`);
+    listEl.scrollIntoView({ behavior: 'smooth' });
   }
 
   render() {
@@ -86,4 +128,8 @@ class Marker extends Component {
   }
 }
 
-export default Marker;
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(markerActions, dispatch)
+});
+
+export default connect(null, mapDispatchToProps)(Marker);

@@ -16,11 +16,11 @@ class List extends Component {
 
   handleMouseOver(id) {
     const { actions } = this.props;
-    actions.mouseOverMarker(id);
+    actions.hoverMarker(id);
   }
   handleMouseLeave(id) {
     const { actions } = this.props;
-    actions.mouseLeaveMarker(id);
+    actions.unhoverMarker(id);
   }
   
   render() {
@@ -32,6 +32,7 @@ class List extends Component {
             return (
               <Item 
                 key={m.id} i={i}
+                markerId={m.id}
                 hovered={m.hovered}
                 onMouseOver={() => this.handleMouseOver(m.id)}
                 onMouseLeave={() => this.handleMouseLeave(m.id)}
@@ -48,7 +49,7 @@ class List extends Component {
 
 const mapStateToProps = state => {
   return {
-    marker: state.marker
+    marker: state.marker.list
   }
 }
 const mapDispatchToProps = dispatch => ({

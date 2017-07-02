@@ -48,7 +48,7 @@ class Map extends Component {
     const { google } = this.props;
 
     // basic map configuration
-    const zoom = 12;
+    const zoom = 11;
     const center = new google.maps.LatLng(51.2419782, 7.0937274);
     const mapConfig = {
       center,

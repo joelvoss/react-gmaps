@@ -7,6 +7,9 @@ import globalStore from './reducer';
 
 import Root from './container/Root';
 import './global-styles';
+
+// polyfills
+require('smoothscroll-polyfill').polyfill();
 //import registerServiceWorker from './registerServiceWorker';
 
 // create redux store

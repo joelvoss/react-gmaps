@@ -57,7 +57,7 @@ class GoogleMap extends Component {
 
 const mapStateToProps = state => {
   return {
-    marker: state.marker
+    marker: state.marker.list
   }
 }
 

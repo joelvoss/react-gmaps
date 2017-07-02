@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 
-const Item = styled.li`
+const Item = styled.li.attrs({
+  'data-markerItemId': props => props.markerId
+})`
   margin: 0;
-  padding: 0.2em 1em;
+  padding: 0.5em 1em;
   border-bottom: 1px solid rgba(0,0,0,0.3);
   border-top: ${props => props.i === 0 ? '1px solid rgba(0,0,0,0.3)' : 'none'};
   cursor: pointer;
