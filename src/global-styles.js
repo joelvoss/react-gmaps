@@ -15,7 +15,7 @@ injectGlobal`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -moz-font-feature-settings: "liga" on;
-    color: rgba(0,0,0,.8);
+    color: #484848;
     font-size: 18px;
     line-height: 1.4;
   }

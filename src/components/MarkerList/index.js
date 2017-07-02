@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Wrapper from './Wrapper';
-import Item from './Item';
+import List from './List';
 
 import * as markerActions from './../../actions/markerActions';
 
-class List extends Component {
+class MarkerList extends Component {
   constructor(props) {
     super(props);
 
@@ -26,23 +25,11 @@ class List extends Component {
   render() {
     const { marker } = this.props;
     return (
-      <Wrapper>
-        {
-          marker && marker.map((m, i) => {
-            return (
-              <Item 
-                key={m.id} i={i}
-                markerId={m.id}
-                hovered={m.hovered}
-                onMouseOver={() => this.handleMouseOver(m.id)}
-                onMouseLeave={() => this.handleMouseLeave(m.id)}
-              >
-                Marker <span>{m.id}</span>
-              </Item>
-            )
-          })
-        }
-      </Wrapper>
+      <List
+        marker={marker}
+        handleMouseLeave={this.handleMouseLeave}
+        handleMouseOver={this.handleMouseOver}
+      />
     )
   }
 }
@@ -56,4 +43,4 @@ const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(markerActions, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(List);
+export default connect(mapStateToProps, mapDispatchToProps)(MarkerList);
