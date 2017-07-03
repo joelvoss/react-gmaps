@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import LazyLoadImage from './../LazyLoadImage';
 
 export const Item = styled.li.attrs({
   'data-markerItemId': props => props.markerId
@@ -13,19 +14,12 @@ export const Item = styled.li.attrs({
 
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
 `;
 
-export const Image = styled.div`
-  width: 75px;
-  height: 75px;
-  flex-basis: 75px;
-
-  background-image: url(${props => props.src});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  margin: 0 0.75em 0.75em 0;
+export const ListImage = styled(LazyLoadImage)`
+  width: 50px;
+  margin-right: 1em;
 `;
 
 export const InfoWrapper = styled.div`
@@ -37,28 +31,22 @@ export const InfoWrapper = styled.div`
 export const Title = styled.h2`
   font-weight: 700;
   font-size: 0.9em;
-  line-height: 0.9em;
+  line-height: 1;
   padding: 0;
   margin: 0 0 0.2em 0;
 `;
 
 export const Location = styled.span`
   font-size: 0.7em;
+  line-height: 1;
   font-weight: 700;
-  padding: 0;
-  margin: 0 0 0.5em 0;
-`;
-
-export const Description = styled.p`
-  flex: 1;
-  font-color: #666;
-  font-size: 0.9em;
   padding: 0;
   margin: 0 0 0.5em 0;
 `;
 
 export const Meta = styled.span`
   font-size: 0.6em;
+  line-height: 1;
   padding: 0;
   margin: 0;
 `;
