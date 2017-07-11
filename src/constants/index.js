@@ -1,3 +1,7 @@
+export const SAVE_GOOGLE = 'SAVE_GOOGLE';
+export const SAVE_MAP = 'SAVE_MAP';
+export const SAVE_PLACES_SERVICE = 'SAVE_PLACES_SERVICE';
+
 export const SELECT_MARKER = 'SELECT_MARKER';
 export const DESELECT_MARKER = 'DESELECT_MARKER';
 export const HOVER_MARKER = 'HOVER_MARKER';

@@ -15,8 +15,7 @@ const withGoogleMap = ({ apiKey }) => (WrappedComponent) => {
       });
 
       this.state = {
-        gmapLoaded: false,
-        google: null
+        gLib: null
       }
     }
 
@@ -62,8 +61,7 @@ const withGoogleMap = ({ apiKey }) => (WrappedComponent) => {
      */
     scriptLoaded() {
       this.setState(() => ({
-        gmapLoaded: true,
-        google: window.google
+        gLib: window.google
       }));
     }
 

@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import * as mapActions from './../../actions/googleActions';
 
 const MapWrapper = styled.div`
   position: absolute;
@@ -13,13 +17,6 @@ class Map extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      loaded: false,
-      children: null
-    };
-
-    this.initMap = this.initMap.bind(this);
-    this.createChildren = this.createChildren.bind(this);
     this.handleIdle = this.handleIdle.bind(this);
   }
 
@@ -29,7 +26,19 @@ class Map extends Component {
    * @returns {void}
    */
   componentDidMount() {
-    this.initMap();
+    const { google, actions } = this.props;
+
+    // basic map configuration
+    const zoom = 11;
+    this.location = new google.maps.LatLng(51.2419782, 7.0937274);
+    const center = this.location;
+    const mapConfig = {
+      center,
+      zoom
+    };
+
+    // init the google maps & save it in the global redux store
+    actions.saveMap(new google.maps.Map(this.root, mapConfig)); 
   }
 
   /**
@@ -42,49 +51,20 @@ class Map extends Component {
   }
 
   /**
-   * Initialize a Google Map instance.
+   * React lifecycle method.
+   * When the component did update, check if we have a valid maps property (e.g. it is initialized)
+   * create its eventlisteners and init the places service.
+   * @param {any} prevProps - Previous properties
+   * @param {any} prevState - Previous state
+   * @returns {void}
    */
-  initMap() {
-    const { google } = this.props;
-
-    // basic map configuration
-    const zoom = 11;
-    const center = new google.maps.LatLng(51.2419782, 7.0937274);
-    const mapConfig = {
-      center,
-      zoom
-    };
-
-    // initialize the map
-    this.map = new google.maps.Map(this.root, mapConfig);
-    
-    // create all google event listeners
-    this.createEventListener();
-
-    // set the state
-    this.setState(() => ({
-      loaded: true
-    }));
-  }
-
-  /**
-   * Takes all children of the map and hydrates the children with the map properties.
-   * @returns {array} - Array of cloned and hydrated children.
-   */
-  createChildren() {
-    const { loaded } = this.state;
-    const { children, google } = this.props;
-
-    if (loaded) {
-      // iterate over each children and add google and map properties onto it by cloning the child
-      return React.Children.map(children, (child) => {
-        return React.cloneElement(child, {
-          google,
-          map: this.map
-        });
-      });
-    } else {
-      return null;
+  componentDidUpdate(prevProps, prevState) {
+    const { google, map, actions } = this.props;
+    if (prevProps.map !== map) {
+      // init the places service & save it in the global redux store
+      actions.savePlacesService(new google.maps.places.PlacesService(map));
+      // create map event listener
+      this.createEventListener();
     }
   }
 
@@ -93,7 +73,11 @@ class Map extends Component {
    * @returns {void}
    */
   createEventListener() {
-    this.map.addListener('idle', this.handleIdle);
+    const { map } = this.props;
+    console.log('create event listener', map);
+    if (map) {
+      map.addListener('idle', this.handleIdle);
+    }
   }
 
   /**
@@ -101,7 +85,10 @@ class Map extends Component {
    * @returns {void}
    */
   removeEventListener() {
-    this.map.removeListener('idle', this.handleIdle);
+    const { map } = this.props;
+    if (map) {
+      map.removeListener('idle', this.handleIdle);
+    }
   }
 
   /**
@@ -109,13 +96,24 @@ class Map extends Component {
    * @returns {void}
    */
   handleIdle() {
-    this.setState(() => ({
-      children: this.createChildren()
-    }));
+    const { placesService } = this.props;
+    // Todo: create marker...
+    console.log('Todo: create marker...', placesService);
+
+    const request = {
+      location: this.location,
+      radius: '500',
+      types: ['store']
+    };
+
+    placesService.nearbySearch(request, (results, status) => {
+      console.log('places search finished', results, status);
+    });
   }
   
   render() {
-    const { children } = this.state;
+    const { marker, children } = this.props;
+
     return (
       <MapWrapper innerRef={c => this.root = c}>
         {
@@ -126,4 +124,16 @@ class Map extends Component {
   }
 }
 
-export default Map;
+const mapStateToProps = state => {
+  return {
+    loaded: state.google.loaded,
+    google: state.google.lib,
+    map: state.google.map,
+    placesService: state.google.placesService
+  }
+}
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(mapActions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Map);
