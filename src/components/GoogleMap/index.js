@@ -8,13 +8,8 @@ import withGoogleMap from './../withGoogleMap';
 import Wrapper from './Wrapper';
 import LoadingOverlay from './../LoadingOverlay';
 import Map from './Map';
-import Marker from './Marker';
 
 class GoogleMap extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentWillReceiveProps (newProps) {
     const { google, actions } = this.props;
     if ( newProps.gLib && (newProps.gLib !== google)) {
@@ -32,7 +27,7 @@ class GoogleMap extends Component {
   }
 
   render() {
-    const { loaded, marker } = this.props;
+    const { loaded } = this.props;
 
     return (
       <Wrapper>

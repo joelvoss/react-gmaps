@@ -4,13 +4,16 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import globalStore from './reducer';
+import registerServiceWorker from './registerServiceWorker';
 
+// Global styles
+import './global-styles.css';
+
+// Components & Container
 import Root from './container/Root';
-import './global-styles';
 
-// polyfills
+// Polyfills
 require('smoothscroll-polyfill').polyfill();
-//import registerServiceWorker from './registerServiceWorker';
 
 // create redux store
 const store = createStore(globalStore)
@@ -19,4 +22,4 @@ ReactDOM.render(
   <Provider store={store}>
     <Root />
   </Provider>, document.getElementById('root'));
-//registerServiceWorker();
+registerServiceWorker();

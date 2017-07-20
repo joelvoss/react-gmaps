@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import Ul from './Ul';
 import { Item, ListImage, InfoWrapper, Title, Location, Meta } from './ItemComponents';
 

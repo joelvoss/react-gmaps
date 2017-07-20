@@ -112,7 +112,7 @@ class Map extends Component {
   }
   
   render() {
-    const { marker, children } = this.props;
+    const { children } = this.props;
 
     return (
       <MapWrapper innerRef={c => this.root = c}>
