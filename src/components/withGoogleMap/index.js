@@ -1,44 +1,36 @@
 import React, { Component } from 'react';
 import GmapsUrl from './GmapsUrl';
 
-const withGoogleMap = ({ apiKey }) => (WrappedComponent) => {
+const withGoogleMap = ({ apiKey }) => WrappedComponent => {
   class GoogleMapsLoader extends Component {
-    /**
-     * Creates an instance of GoogleMapsLoader.
-     * @param {object} props - Components props
-     */
-    constructor (props) {
+    constructor(props) {
       super(props);
 
       this.script = GmapsUrl({
-        apiKey,
+        apiKey
       });
 
       this.state = {
         gLib: null
-      }
+      };
     }
 
     /**
-     * React lifecycle method.
-     * Start loading scripts on mount event.
-     * @returns {void}
+     * Add script tag to the dom when the component mounts and its not already available.
      */
-    componentDidMount () {
-      if (this.isScriptAvailable(this.script)) {
-        this.props.onGmapReady(window.google);
-      } else {
+    componentDidMount() {
+      if (!this.isScriptAvailable(this.script)) {
         this.addScript(this.script);
       }
     }
 
     /**
-     * Check of a given script source is already embedded.
+     * Checks of a given script source is already embedded.
      * @param {string} src - Script source
      * @returns {bool} - True or false
      */
     isScriptAvailable(src) {
-      const node = document.querySelector(`script[src='${src}']`)
+      const node = document.querySelector(`script[src='${src}']`);
       return node ? true : false;
     }
 
@@ -80,32 +72,18 @@ const withGoogleMap = ({ apiKey }) => (WrappedComponent) => {
      * @returns {void}
      */
     removeScript(src) {
-      const node = document.querySelector(`script[src='${src}']`)
+      const node = document.querySelector(`script[src='${src}']`);
       if (node != null) {
-        node.parentNode.removeChild(node)
+        node.parentNode.removeChild(node);
       }
     }
 
-    /**
-     * When the component unmounts...remove the script from the dom.
-     * @returns {void}
-     */
-    componentWillUnmount () {
-      this.removeScript(this.script);
-    }
-
-    /**
-     * React render method.
-     * @returns {jsx} - Components JSX
-     */
-    render () {
-      return (
-        <WrappedComponent {...this.state} {...this.props}/>
-      )
+    render() {
+      return <WrappedComponent {...this.state} {...this.props} />;
     }
   }
 
   return GoogleMapsLoader;
-}
+};
 
 export default withGoogleMap;

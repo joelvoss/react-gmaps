@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Ul = styled.ul`
+const Wrapper = styled.ul`
   position: relative;
   list-style: none;
   flex: 0 0 33%;
@@ -10,4 +10,4 @@ const Ul = styled.ul`
   overflow: auto;
 `;
 
-export default Ul;
+export default Wrapper;

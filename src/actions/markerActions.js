@@ -1,22 +1,22 @@
-import * as types from './../constants';
+import * as types from '../constants';
 
 export function hoverMarker(id) {
-  return { 
+  return {
     type: types.HOVER_MARKER,
     id
-  }
+  };
 }
 
 export function unhoverMarker(id) {
-  return { 
+  return {
     type: types.UNHOVER_MARKER,
     id
-  }
+  };
 }
 
 export function selectMarker(id) {
-  return { 
+  return {
     type: types.SELECT_MARKER,
     id
-  }
+  };
 }

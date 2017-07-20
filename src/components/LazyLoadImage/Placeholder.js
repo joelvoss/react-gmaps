@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
-export const IntrinsicPlaceholder = styled.div`
-  padding-bottom: ${props => props.paddingBottom}%;
-`;
+export const IntrinsicPlaceholder = styled.div`padding-bottom: ${props => props.paddingBottom}%;`;
 
 const Placeholder = styled.div`
   background-color: #f6f6f6;

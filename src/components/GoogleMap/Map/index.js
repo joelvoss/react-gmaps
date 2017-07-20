@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as mapActions from './../../actions/googleActions';
+import * as mapActions from 'actions/googleActions';
 
-const MapWrapper = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-`;
+import MapWrapper from './MapWrapper';
 
 class Map extends Component {
   constructor(props) {
@@ -23,7 +16,6 @@ class Map extends Component {
   /**
    * React lifecycle method.
    * When the map mounts, initialize the Google Map.
-   * @returns {void}
    */
   componentDidMount() {
     const { google, actions } = this.props;
@@ -38,7 +30,7 @@ class Map extends Component {
     };
 
     // init the google maps & save it in the global redux store
-    actions.saveMap(new google.maps.Map(this.root, mapConfig)); 
+    actions.saveMap(new google.maps.Map(this.root, mapConfig));
   }
 
   /**
@@ -74,9 +66,8 @@ class Map extends Component {
    */
   createEventListener() {
     const { map } = this.props;
-    console.log('create event listener', map);
     if (map) {
-      map.addListener('idle', this.handleIdle);
+      this.idleListener = map.addListener('idle', this.handleIdle);
     }
   }
 
@@ -85,10 +76,7 @@ class Map extends Component {
    * @returns {void}
    */
   removeEventListener() {
-    const { map } = this.props;
-    if (map) {
-      map.removeListener('idle', this.handleIdle);
-    }
+    this.idleListener.remove();
   }
 
   /**
@@ -110,15 +98,13 @@ class Map extends Component {
       console.log('places search finished', results, status);
     });
   }
-  
+
   render() {
     const { children } = this.props;
 
     return (
-      <MapWrapper innerRef={c => this.root = c}>
-        {
-          children
-        }
+      <MapWrapper innerRef={c => (this.root = c)}>
+        {children}
       </MapWrapper>
     );
   }
@@ -130,8 +116,8 @@ const mapStateToProps = state => {
     google: state.google.lib,
     map: state.google.map,
     placesService: state.google.placesService
-  }
-}
+  };
+};
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(mapActions, dispatch)
 });

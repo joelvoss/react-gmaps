@@ -1,22 +1,22 @@
-import * as types from './../constants';
+import * as types from '../constants';
 
 export function saveGoogle(google) {
-  return { 
+  return {
     type: types.SAVE_GOOGLE,
     google
-  }
+  };
 }
 
 export function saveMap(map) {
-  return { 
+  return {
     type: types.SAVE_MAP,
     map
-  }
+  };
 }
 
 export function savePlacesService(placesService) {
-  return { 
+  return {
     type: types.SAVE_PLACES_SERVICE,
     placesService
-  }
+  };
 }

@@ -1,16 +1,17 @@
 import React from 'react';
-import Ul from './Ul';
-import { Item, ListImage, InfoWrapper, Title, Location, Meta } from './ItemComponents';
+import Wrapper from './Wrapper';
+import { Item, ListImage, InfoWrapper, Title, Location, Meta } from './Item';
 
-const List = (props) => {
+const List = props => {
   const { marker, handleMouseOver, handleMouseLeave } = props;
   return (
-    <Ul>
-      {
-        marker && marker.map((m, i) => {
+    <Wrapper>
+      {marker &&
+        marker.map((m, i) => {
           return (
-            <Item 
-              key={m.id} i={i}
+            <Item
+              key={m.id}
+              i={i}
               markerId={m.id}
               hovered={m.hovered}
               onMouseOver={() => handleMouseOver(m.id)}
@@ -23,16 +24,21 @@ const List = (props) => {
                 alt={m.title}
               />
               <InfoWrapper>
-                <Title>{m.title}</Title>
-                <Location>{m.meta}</Location>
-                <Meta>{m.id}</Meta>
+                <Title>
+                  {m.title}
+                </Title>
+                <Location>
+                  {m.meta}
+                </Location>
+                <Meta>
+                  {m.id}
+                </Meta>
               </InfoWrapper>
             </Item>
-          )
-        })
-      }
-    </Ul>
+          );
+        })}
+    </Wrapper>
   );
-}
+};
 
 export default List;

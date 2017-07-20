@@ -12,7 +12,7 @@ class LazyLoadImage extends Component {
     placeholder: PropTypes.string.isRequired,
     src: PropTypes.string.isRequired,
     alt: PropTypes.string.isRequired
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -25,23 +25,21 @@ class LazyLoadImage extends Component {
 
   render() {
     const { intrinsicHeight } = this.props;
-    const { blurLoaded, imageLoaded } = this.state; 
+    const { blurLoaded, imageLoaded } = this.state;
 
     return (
       <Placeholder className={this.props.className}>
-        <BluredImage src={this.props.placeholder}
-          onLoad={() => this.setState({blurLoaded: true})}
+        <BluredImage
+          src={this.props.placeholder}
+          onLoad={() => this.setState({ blurLoaded: true })}
           loaded={blurLoaded}
         />
-        
+
         <IntrinsicPlaceholder paddingBottom={intrinsicHeight} />
-        
-        <Image src={this.props.src}
-          onLoad={() => this.setState({imageLoaded: true})}
-          loaded={imageLoaded}
-        />
+
+        <Image src={this.props.src} onLoad={() => this.setState({ imageLoaded: true })} loaded={imageLoaded} />
       </Placeholder>
-    )
+    );
   }
 }
 

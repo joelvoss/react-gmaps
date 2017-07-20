@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as markerActions from './../../actions/markerActions';
+import * as markerActions from 'actions/markerActions';
 
 class Marker extends Component {
   constructor(props) {
@@ -27,8 +27,7 @@ class Marker extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if ((nextProps.lat !== this.props.lat)
-        || (nextProps.lng !== this.props.lng)) {      
+    if (nextProps.lat !== this.props.lat || nextProps.lng !== this.props.lng) {
       this.renderMarker();
     }
   }
@@ -59,7 +58,7 @@ class Marker extends Component {
       // create event listener for this marker
       this.createEventListener();
     } else {
-      this.marker.setPosition({ lat, lng })
+      this.marker.setPosition({ lat, lng });
     }
   }
 

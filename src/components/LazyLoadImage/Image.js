@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const Image = styled.img`
   position: absolute;
-  opacity: ${props => props.loaded ? 1 : 0};
+  opacity: ${props => (props.loaded ? 1 : 0)};
   top: 0;
   left: 0;
   width: 100%;

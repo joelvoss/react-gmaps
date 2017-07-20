@@ -7,7 +7,7 @@ export function mockPosition(google, map) {
   const lng_range = bounds.getNorthEast().lng() - lng_min;
 
   return {
-    lat: lat_min + (Math.random() * lat_range),
-    lng: lng_min + (Math.random() * lng_range)
+    lat: lat_min + Math.random() * lat_range,
+    lng: lng_min + Math.random() * lng_range
   };
 }
