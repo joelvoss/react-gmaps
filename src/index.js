@@ -10,7 +10,7 @@ import registerServiceWorker from './registerServiceWorker';
 import './global-styles.css';
 
 // Components & Container
-import Root from './container/Root';
+import Root from 'container/Root';
 
 // Polyfills
 require('smoothscroll-polyfill').polyfill();
