@@ -12,9 +12,6 @@ const Wrapper = styled.div`
   align-items: center;
 
   z-index: 99;
-
-  opacity: ${props => (props.show ? 1 : 0)};
-  pointer-events: ${props => (props.show ? 'all' : 'none')};
 `;
 
 export default Wrapper;

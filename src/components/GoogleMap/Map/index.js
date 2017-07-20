@@ -3,108 +3,50 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import * as mapActions from 'actions/googleActions';
+import * as markerActions from 'actions/markerActions';
 
+import Places from 'components/GoogleMap/Places';
 import MapWrapper from './MapWrapper';
+import Marker from 'components/GoogleMap/Marker';
 
 class Map extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleIdle = this.handleIdle.bind(this);
-  }
-
   /**
-   * React lifecycle method.
-   * When the map mounts, initialize the Google Map.
+   * When the map mounts, initialize the actual google map.
    */
   componentDidMount() {
-    const { google, actions } = this.props;
+    const { google, actions, map } = this.props;
 
     // basic map configuration
-    const zoom = 11;
-    this.location = new google.maps.LatLng(51.2419782, 7.0937274);
-    const center = this.location;
     const mapConfig = {
-      center,
-      zoom
+      center: new google.maps.LatLng(process.env.TWT_APP_MAP_CENTER_LAT, process.env.TWT_APP_MAP_CENTER_LNG),
+      zoom: parseInt(process.env.TWT_APP_MAP_ZOOM, 10)
     };
 
     // init the google maps & save it in the global redux store
-    actions.saveMap(new google.maps.Map(this.root, mapConfig));
-  }
-
-  /**
-   * React lifecycle method.
-   * When the component unmounts remove all event listeners.
-   * @returns {void}
-   */
-  componentWillUnmount() {
-    this.removeEventListener();
-  }
-
-  /**
-   * React lifecycle method.
-   * When the component did update, check if we have a valid maps property (e.g. it is initialized)
-   * create its eventlisteners and init the places service.
-   * @param {any} prevProps - Previous properties
-   * @param {any} prevState - Previous state
-   * @returns {void}
-   */
-  componentDidUpdate(prevProps, prevState) {
-    const { google, map, actions } = this.props;
-    if (prevProps.map !== map) {
-      // init the places service & save it in the global redux store
-      actions.savePlacesService(new google.maps.places.PlacesService(map));
-      // create map event listener
-      this.createEventListener();
+    // only if we havent already done it
+    if (!map) {
+      this.newMap = new google.maps.Map(this.root, mapConfig);
+      actions.saveMap(this.newMap);
     }
-  }
-
-  /**
-   * Create Google Maps event listener.
-   * @returns {void}
-   */
-  createEventListener() {
-    const { map } = this.props;
-    if (map) {
-      this.idleListener = map.addListener('idle', this.handleIdle);
-    }
-  }
-
-  /**
-   * Remove Google Maps event listener.
-   * @returns {void}
-   */
-  removeEventListener() {
-    this.idleListener.remove();
-  }
-
-  /**
-   * Handle the Google Maps "idle" event.
-   * @returns {void}
-   */
-  handleIdle() {
-    const { placesService } = this.props;
-    // Todo: create marker...
-    console.log('Todo: create marker...', placesService);
-
-    const request = {
-      location: this.location,
-      radius: '500',
-      types: ['store']
-    };
-
-    placesService.nearbySearch(request, (results, status) => {
-      console.log('places search finished', results, status);
-    });
   }
 
   render() {
-    const { children } = this.props;
+    const { marker } = this.props;
 
     return (
       <MapWrapper innerRef={c => (this.root = c)}>
-        {children}
+        <Places />
+        {marker &&
+          marker.map(item => {
+            return (
+              <Marker
+                key={item.place_id}
+                id={item.place_id}
+                lat={item.geometry.location.lat()}
+                lng={item.geometry.location.lng()}
+              />
+            );
+          })}
       </MapWrapper>
     );
   }
@@ -112,14 +54,13 @@ class Map extends Component {
 
 const mapStateToProps = state => {
   return {
-    loaded: state.google.loaded,
     google: state.google.lib,
     map: state.google.map,
-    placesService: state.google.placesService
+    marker: state.marker.list
   };
 };
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(mapActions, dispatch)
+  actions: bindActionCreators(Object.assign({}, mapActions, markerActions), dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Map);

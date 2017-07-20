@@ -1,10 +1,20 @@
 import { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import * as markerActions from 'actions/markerActions';
 
+/**
+ * This component represents a single marker inside the google map.
+ */
 class Marker extends Component {
+  static propTypes = {
+    lat: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired
+  };
+
   constructor(props) {
     super(props);
 
@@ -17,15 +27,16 @@ class Marker extends Component {
   }
 
   /**
-   * React lifecycle method.
-   * When the component mounts for the first time, mock a marker position
-   * inside the current map bounds and create a marker.
-   * @returns {void}
+   * When the component mounts, render a marker on the google map.
    */
   componentDidMount() {
     this.renderMarker();
   }
 
+  /**
+   * If the props of a marker change, re-render the marker.
+   * @param {object} nextProps - The next properties.
+   */
   componentWillReceiveProps(nextProps) {
     if (nextProps.lat !== this.props.lat || nextProps.lng !== this.props.lng) {
       this.renderMarker();
@@ -33,28 +44,26 @@ class Marker extends Component {
   }
 
   /**
-   * React lifecycle method.
-   * When the component unmounts, remove all event listeners.
-   * @returns {void}
+   * When the component unmounts, remove all event listeners
+   * and null the current connected map-data for this marker.
    */
   componentWillUnmount() {
-    this.marker.setMap(null);
     this.removeEventListener();
+    this.marker.setMap(null);
   }
 
   /**
-   * Creates or updates a marker with the given props
-   * @returns {void}
+   * Renders a marker with the given props and creates all event listeners for it.
+   * If the marker was already initialized, update its position.
    */
   renderMarker() {
     const { google, map, lat, lng } = this.props;
-
     if (!this.marker) {
+      const position = { lat: lat, lng: lng };
       this.marker = new google.maps.Marker({
-        position: { lat, lng },
+        position,
         map
       });
-
       // create event listener for this marker
       this.createEventListener();
     } else {
@@ -64,7 +73,6 @@ class Marker extends Component {
 
   /**
    * Create event listeners for this marker.
-   * @returns {void}
    */
   createEventListener() {
     this.marker.addListener('mouseover', this.handleMouseOver);
@@ -72,18 +80,18 @@ class Marker extends Component {
     this.marker.addListener('click', this.handleClick);
   }
   /**
-   * Remove event listeners for this marker.
-   * @returns {void}
+   * Remove all event listeners of this marker.
    */
   removeEventListener() {
-    this.marker.removeListener('mouseover', this.handleMouseOver);
-    this.marker.removeListener('mouseout', this.handleMouseOut);
-    this.marker.removeListener('click', this.handleClick);
+    return new Promise((resolve, reject) => {
+      const { google } = this.props;
+      google.maps.event.clearInstanceListeners(this.marker);
+      return resolve();
+    });
   }
 
   /**
-   * Handles the mouseover event of a google maps marker.
-   * @returns {void}
+   * Handles the mouseover event of this marker.
    */
   handleMouseOver() {
     const { actions, id } = this.props;
@@ -92,8 +100,7 @@ class Marker extends Component {
   }
 
   /**
-   * Handles the mouseleave event of a google maps marker.
-   * @returns {void}
+   * Handles the mouseleave event of this marker.
    */
   handleMouseOut() {
     const { actions, id } = this.props;
@@ -101,8 +108,7 @@ class Marker extends Component {
   }
 
   /**
-   * Handles a cick event on a google maps marker.
-   * @returns {void}
+   * Handles the cick event of this marker..
    */
   handleClick() {
     const { actions, id } = this.props;
@@ -114,12 +120,11 @@ class Marker extends Component {
    * Smooth scroll to the element with a given id
    * by querying the DOM for the element with a data-attr attached to it.
    * Uses the smoothscroll polyfill, see https://github.com/iamdustan/smoothscroll
-   * @param {string} id - The uuidv4 ID of the element to scroll to.
-   * @returns {void}
+   * @param {string} id - The id of the element to scroll to.
    */
   smoothScrollToElement(id) {
-    const listEl = document.querySelector(`[data-markerItemId="${id}"]`);
-    listEl.scrollIntoView({ behavior: 'smooth' });
+    // const listEl = document.querySelector(`[data-markerItemId="${id}"]`);
+    // listEl.scrollIntoView({ behavior: 'smooth' });
   }
 
   render() {
@@ -127,8 +132,17 @@ class Marker extends Component {
   }
 }
 
+// Maps redux state to props.
+const mapStateToProps = state => {
+  return {
+    google: state.google.lib,
+    map: state.google.map
+  };
+};
+
+// Maps dispatch method to props.
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(markerActions, dispatch)
 });
 
-export default connect(null, mapDispatchToProps)(Marker);
+export default connect(mapStateToProps, mapDispatchToProps)(Marker);

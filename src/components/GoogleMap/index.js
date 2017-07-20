@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as mapActions from 'actions/googleActions';
+import * as googleActions from 'actions/googleActions';
 
 import withGoogleMap from 'components/withGoogleMap';
 import Wrapper from './Wrapper';
@@ -20,8 +20,8 @@ class GoogleMap extends Component {
    * @param {object} newProps - The new props. 
    */
   componentWillReceiveProps(newProps) {
-    const { google, actions } = this.props;
-    if (newProps.gLib && newProps.gLib !== google) {
+    const { gLib, actions } = this.props;
+    if (newProps.gLib && newProps.gLib !== gLib) {
       // save google globally
       actions.saveGoogle(newProps.gLib);
     }
@@ -32,20 +32,24 @@ class GoogleMap extends Component {
    * If its loaded, save it globally.
    */
   componentDidMount() {
-    const { google, actions } = this.props;
-    if (google) {
+    const { gLib, google, actions } = this.props;
+    
+    actions.toggleMapLoading(true);
+    
+    if (google && gLib !== google) {
       // save google globally
       actions.saveGoogle(google);
+      actions.toggleMapLoading(false);
     }
   }
 
   render() {
-    const { loaded } = this.props;
+    const { google, loading } = this.props;
 
     return (
       <Wrapper>
-        <LoadingOverlay show={!loaded} />
-        {loaded && <Map />}
+        {loading && <LoadingOverlay/>}
+        {google && <Map />}
       </Wrapper>
     );
   }
@@ -54,14 +58,14 @@ class GoogleMap extends Component {
 // Map redux state to props
 const mapStateToProps = state => {
   return {
-    loaded: state.google.loaded,
+    loading: state.google.loading,
     google: state.google.lib,
     marker: state.marker.list
   };
 };
 // Map dispatch method to all action creators
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(mapActions, dispatch)
+  actions: bindActionCreators(googleActions, dispatch)
 });
 
 // connect current component with redux state

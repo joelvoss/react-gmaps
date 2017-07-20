@@ -20,3 +20,10 @@ export function selectMarker(id) {
     id
   };
 }
+
+export function replaceMarkersWithNew(payload) {
+  return {
+    type: types.REPLACE_MARKERS_WITH_NEW,
+    payload
+  };
+}

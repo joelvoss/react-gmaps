@@ -20,3 +20,10 @@ export function savePlacesService(placesService) {
     placesService
   };
 }
+
+export function toggleMapLoading(loadingState) {
+  return {
+    type: types.TOGGLE_MAP_LOADING,
+    loadingState
+  };
+}

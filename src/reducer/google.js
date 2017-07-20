@@ -1,17 +1,16 @@
 import * as types from './../constants';
 
 const initialState = {
-  loaded: false,
   lib: null,
   map: null,
-  placesService: null
+  placesService: null,
+  loading: false
 };
 
 const map = (state = initialState, action) => {
   switch (action.type) {
     case types.SAVE_GOOGLE:
       return Object.assign({}, state, {
-        loaded: true,
         lib: action.google
       });
 
@@ -23,6 +22,11 @@ const map = (state = initialState, action) => {
     case types.SAVE_PLACES_SERVICE:
       return Object.assign({}, state, {
         placesService: action.placesService
+      });
+
+    case types.TOGGLE_MAP_LOADING:
+      return Object.assign({}, state, {
+        loading: action.loadingState
       });
 
     default:
