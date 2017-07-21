@@ -94,6 +94,7 @@ class Marker extends Component {
     this.marker.addListener('mouseout', this.handleMouseOut);
     this.marker.addListener('click', this.handleClick);
   }
+
   /**
    * Remove all event listeners of this marker.
    */

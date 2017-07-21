@@ -5,7 +5,7 @@ const Wrapper = styled.div`
   overflow: hidden;
   background-color: #f6f6f6;
   width: 100%;
-  height: ${props => `${props.intrinsicHeight}px`};
+  height: 100%;
 `;
 
 export default Wrapper;

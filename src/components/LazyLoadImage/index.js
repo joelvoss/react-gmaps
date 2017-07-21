@@ -5,7 +5,6 @@ import Wrapper from './Wrapper';
 
 class LazyLoadImage extends Component {
   static propTypes = {
-    intrinsicHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     placeholder: PropTypes.string.isRequired,
     src: PropTypes.string.isRequired
   };
@@ -25,11 +24,11 @@ class LazyLoadImage extends Component {
   }
 
   render() {
-    const { intrinsicHeight, placeholder, src } = this.props;
+    const { placeholder, src } = this.props;
     const { loaded } = this.state;
 
     return (
-      <Wrapper className={this.props.className} intrinsicHeight={intrinsicHeight}>
+      <Wrapper className={this.props.className}>
         <BluredImg source={placeholder} />
         {
           loaded && <Img source={src} />

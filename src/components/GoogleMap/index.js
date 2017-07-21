@@ -50,10 +50,10 @@ class GoogleMap extends Component {
   }
 
   render() {
-    const { google, loading } = this.props;
+    const { google, loading, config } = this.props;
 
     return (
-      <Wrapper>
+      <Wrapper minHeight={config.map.height}>
         <LoadingOverlay show={loading} />
         {google && <Map />}
       </Wrapper>

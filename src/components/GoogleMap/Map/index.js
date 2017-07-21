@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as mapActions from 'actions/googleActions';
 import * as markerActions from 'actions/markerActions';
 
+import withGeolocation from 'components/withGeolocation';
 import Places from 'components/GoogleMap/Places';
 import MapWrapper from './MapWrapper';
 import Marker from 'components/GoogleMap/Marker';
@@ -15,7 +16,6 @@ class Map extends Component {
    */
   componentDidMount() {
     const { google, actions, map } = this.props;
-
     // basic map configuration
     const mapConfig = {
       center: new google.maps.LatLng(process.env.TWT_APP_MAP_CENTER_LAT, process.env.TWT_APP_MAP_CENTER_LNG),
@@ -27,6 +27,15 @@ class Map extends Component {
     if (!map) {
       this.newMap = new google.maps.Map(this.root, mapConfig);
       actions.saveMap(this.newMap);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.geolocationCoords !== this.props.geolocationCoords) {
+      const { google, map } = this.props;
+      const { geolocationCoords } = nextProps;
+      const newLocation = new google.maps.LatLng(geolocationCoords.latitude, geolocationCoords.longitude);
+      map.setCenter(newLocation);
     }
   }
 
@@ -63,4 +72,6 @@ const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(Object.assign({}, mapActions, markerActions), dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Map);
+const MapContainer = connect(mapStateToProps, mapDispatchToProps)(Map);
+
+export default withGeolocation({userDecisionTimeout: 10000})(MapContainer);

@@ -9,6 +9,9 @@ import MarkerList from 'components/MarkerList';
 
 // Basic map configuration object
 const mapConfig = {
+  map: {
+    height: 600
+  },
   icons: {
     info: {
       normal: require('globalAssets/markerIcons/info_normal.svg'),
