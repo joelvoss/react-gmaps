@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Wrapper from './Wrapper';
 import Background from './Background';
 import Loader from './Loader';
@@ -11,7 +12,6 @@ const LoadingOverlay = props => {
   return (
     <Transition in={show} timeout={duration}>
       {status => {
-        console.log(status);
         // if the component exited, remove it from the dom
         if (status === 'exited') {
           return null;
@@ -36,7 +36,7 @@ const LoadingOverlay = props => {
               break;
           }
           return (
-            <Wrapper style={{...style}}>
+            <Wrapper style={{ ...style }}>
               <Background />
               <Loader />
             </Wrapper>
@@ -46,5 +46,9 @@ const LoadingOverlay = props => {
     </Transition>
   );
 };
+
+LoadingOverlay.propTypes = {
+  show: PropTypes.bool.isRequired
+}
 
 export default LoadingOverlay;

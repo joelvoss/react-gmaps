@@ -4,9 +4,6 @@ import Placeholder, { IntrinsicPlaceholder } from './Placeholder';
 import Image, { BluredImage } from './Image';
 
 class LazyLoadImage extends Component {
-  /**
-   * PropTypes
-   */
   static propTypes = {
     intrinsicHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     placeholder: PropTypes.string.isRequired,

@@ -4,6 +4,7 @@ const initialState = {
   lib: null,
   map: null,
   placesService: null,
+  config: null,
   loading: false
 };
 
@@ -28,6 +29,11 @@ const map = (state = initialState, action) => {
       return Object.assign({}, state, {
         loading: action.loadingState
       });
+
+    case types.SAVE_MAP_CONFIG:
+      return Object.assign({}, state, {
+        config: action.config
+      })
 
     default:
       return state;

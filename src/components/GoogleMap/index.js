@@ -20,10 +20,15 @@ class GoogleMap extends Component {
    * @param {object} newProps - The new props. 
    */
   componentWillReceiveProps(newProps) {
-    const { gLib, actions } = this.props;
+    const { config, gLib, actions } = this.props;
     if (newProps.gLib && newProps.gLib !== gLib) {
-      // save google globally
+      // Save google globally
       actions.saveGoogle(newProps.gLib);
+    }
+
+    if (newProps.config && JSON.stringify(newProps.config) !== JSON.stringify(config)) {
+      // Save the maps configuration globally
+      actions.saveMapConfig(newProps.config);
     }
   }
 
@@ -32,15 +37,21 @@ class GoogleMap extends Component {
    * If its loaded, save it globally.
    */
   componentDidMount() {
-    const { gLib, google, actions } = this.props;
-    
+    const { config, gLib, google, actions } = this.props;
+
     actions.toggleMapLoading(true);
-    
+
+    // Save google globally
     if (google && gLib !== google) {
-      // save google globally
       actions.saveGoogle(google);
-      actions.toggleMapLoading(false);
     }
+
+    // Save the maps configuration globally
+    if (config) {
+      actions.saveMapConfig(config);
+    }
+
+    actions.toggleMapLoading(false);
   }
 
   render() {

@@ -27,3 +27,10 @@ export function toggleMapLoading(loadingState) {
     loadingState
   };
 }
+
+export function saveMapConfig(config) {
+  return {
+    type: types.SAVE_MAP_CONFIG,
+    config
+  }
+}

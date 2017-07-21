@@ -100,7 +100,7 @@ module.exports = {
       // "file" loader makes sure those assets end up in the `build` folder.
       // When you `import` an asset, you get its filename.
       {
-        exclude: [/\.html$/, /\.(js|jsx)$/, /\.css$/, /\.json$/, /\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+        exclude: [/\.html$/, /\.(js|jsx)$/, /\.css$/, /\.json$/, /\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
         loader: require.resolve('file-loader'),
         options: {
           name: 'static/media/[name].[hash:8].[ext]'
@@ -177,6 +177,16 @@ module.exports = {
           )
         )
         // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+      },
+      // We load our svg files with "svg-inline" to inline our svg code as module.
+      // If you use Adobe suite or Sketch to export SVGs, you will get auto-generated, unneeded crusts.
+      // This loader removes it for you, too.
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader',
+        options: {
+          removeSVGTagAttrs: false
+        }
       }
       // ** STOP ** Are you adding a new loader?
       // Remember to add the new extension(s) to the "file" loader exclusion list.

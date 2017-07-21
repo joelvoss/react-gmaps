@@ -7,6 +7,16 @@ import Box from './Box';
 import GoogleMapContainer from 'components/GoogleMap';
 // import MarkerList from 'components/MarkerList';
 
+// Basic map configuration object
+const mapConfig = {
+  icons: {
+    info: {
+      normal: require('globalAssets/markerIcons/info_normal.svg'),
+      hovered: require('globalAssets/markerIcons/info_hovered.svg')
+    }
+  }
+}
+
 class Root extends Component {
   render() {
     return (
@@ -17,7 +27,9 @@ class Root extends Component {
                 <H1>React + GMaps</H1>
                 <Box>
                   {/* <MarkerList /> */}
-                  <GoogleMapContainer />
+                  <GoogleMapContainer
+                    config={mapConfig}
+                  />
                 </Box>
               </Wrapper>
             : <p>

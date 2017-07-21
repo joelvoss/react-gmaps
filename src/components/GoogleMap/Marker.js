@@ -18,6 +18,13 @@ class Marker extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      size: [30, 30],
+      scaledSize: [30, 30],
+      normal: this.createSVGDataURIWithHeight(props.mapConfig.icons.info.normal, 30, 30),
+      hovered: this.createSVGDataURIWithHeight(props.mapConfig.icons.info.hovered, 30, 30),
+    };
+
     this.renderMarker = this.renderMarker.bind(this);
     this.createEventListener = this.createEventListener.bind(this);
     this.removeEventListener = this.removeEventListener.bind(this);
@@ -58,11 +65,19 @@ class Marker extends Component {
    */
   renderMarker() {
     const { google, map, lat, lng } = this.props;
+    const { size, scaledSize, normal } = this.state;
     if (!this.marker) {
-      const position = { lat: lat, lng: lng };
       this.marker = new google.maps.Marker({
-        position,
-        map
+        position: { lat: lat, lng: lng },
+        map,
+        optimized: false,
+        icon: {
+          size: new google.maps.Size(size[0], size[1]),
+          scaledSize: new google.maps.Size(scaledSize[0], scaledSize[1]),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(size[0]/2, size[1]/2),
+          url: normal
+        }
       });
       // create event listener for this marker
       this.createEventListener();
@@ -94,17 +109,36 @@ class Marker extends Component {
    * Handles the mouseover event of this marker.
    */
   handleMouseOver() {
-    const { actions, id } = this.props;
+    const { actions, id, google } = this.props;
+    const { size, scaledSize, hovered } = this.state;
+
     actions.hoverMarker(id);
-    this.smoothScrollToElement(id);
+
+    this.marker.setIcon({
+      size: new google.maps.Size(size[0], size[1]),
+      scaledSize: new google.maps.Size(scaledSize[0], scaledSize[1]),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(size[0]/2, size[1]/2),
+      url: hovered
+    });
+    //this.smoothScrollToElement(id);
   }
 
   /**
    * Handles the mouseleave event of this marker.
    */
   handleMouseOut() {
-    const { actions, id } = this.props;
+    const { actions, id, google } = this.props;
+    const { size, scaledSize, normal } = this.state;
     actions.unhoverMarker(id);
+
+    this.marker.setIcon({
+      size: new google.maps.Size(size[0], size[1]),
+      scaledSize: new google.maps.Size(scaledSize[0], scaledSize[1]),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(size[0]/2, size[1]/2),
+      url: normal
+    });
   }
 
   /**
@@ -127,6 +161,23 @@ class Marker extends Component {
     // listEl.scrollIntoView({ behavior: 'smooth' });
   }
 
+  createSVGDataURIWithHeight(svgString, width, height) {
+    return (
+      'data:image/svg+xml,' +
+      encodeURIComponent(
+        svgString
+          .replace(/width\s*=\s*"?(\d+)"/, `width="${width}"`)
+          .replace(/height\s*=\s*"?(\d+)"/, `height="${height}"`)
+          .replace(/\n+/g, '')
+      ) // remove newlines & encode URL-unsafe characters
+        .replace(/%20/g, ' ') // put spaces back in
+        .replace(/%3D/g, '=') // ditto equals signs
+        .replace(/%3A/g, ':') // ditto colons
+        .replace(/%2F/g, '/') // ditto slashes
+        .replace(/%22/g, "'") // replace quotes with apostrophes (may break certain SVGs)
+    );
+  }
+
   render() {
     return null;
   }
@@ -136,7 +187,8 @@ class Marker extends Component {
 const mapStateToProps = state => {
   return {
     google: state.google.lib,
-    map: state.google.map
+    map: state.google.map,
+    mapConfig: state.google.config
   };
 };
 
