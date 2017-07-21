@@ -48,7 +48,7 @@ class GoogleMap extends Component {
 
     return (
       <Wrapper>
-        {loading && <LoadingOverlay/>}
+        <LoadingOverlay show={loading} />
         {google && <Map />}
       </Wrapper>
     );
