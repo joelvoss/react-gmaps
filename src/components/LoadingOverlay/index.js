@@ -17,28 +17,26 @@ const LoadingOverlay = props => {
           return null;
           // on all other transition states, set the animation property
         } else {
-          const aniProp = {
+          const style = {
             opacity: 0,
-            duration
+            transition: `all ${duration}ms ease-in-out`
           };
           switch (status) {
             case 'entering':
-              aniProp.opacity = 0;
+              style.opacity = 0;
               break;
             case 'entered':
-              aniProp.opacity = 1;
+              style.opacity = 1;
               break;
             case 'exiting':
-              aniProp.opacity = 0;
+              style.opacity = 0;
               break;
             default:
-              aniProp.opacity = 0;
+              style.opacity = 0;
               break;
           }
-
-          console.log(aniProp);
           return (
-            <Wrapper animation={aniProp}>
+            <Wrapper style={{...style}}>
               <Background />
               <Loader />
             </Wrapper>

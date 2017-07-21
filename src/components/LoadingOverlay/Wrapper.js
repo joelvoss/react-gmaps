@@ -12,9 +12,6 @@ const Wrapper = styled.div`
   align-items: center;
 
   z-index: 99;
-
-  opacity: ${props => props.animation.opacity};
-  transition: ${props => `all ${props.animation.duration}ms ease-in-out`};
 `;
 
 export default Wrapper;
