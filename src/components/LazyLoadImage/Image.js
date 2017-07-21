@@ -1,18 +1,46 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-const Image = styled.img`
+const blurIn = keyframes`
+  0% {
+    filter: blur(20px);
+  }
+  100% {
+    filter: blur(0);
+  }
+`;
+
+export const Img = styled.div`
   position: absolute;
-  opacity: ${props => (props.loaded ? 1 : 0)};
   top: 0;
   left: 0;
   width: 100%;
-  transition: opacity 1s linear;
-`;
+  height: 100%;
 
-export const BluredImage = Image.extend`
-  filter: blur(50px);
+  background-image: url(${props => props.source});
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #fff;
+
+  animation: ${blurIn} 1s linear;
   /* this is needed so Safari keeps sharp edges */
   transform: scale(1);
 `;
 
-export default Image;
+export const BluredImg = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background-image: url(${props => props.source});
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #fff;
+
+  filter: blur(20px);
+  /* this is needed so Safari keeps sharp edges */
+  transform: scale(1);
+`;

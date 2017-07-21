@@ -12,7 +12,7 @@ class Marker extends Component {
   static propTypes = {
     lat: PropTypes.number.isRequired,
     lng: PropTypes.number.isRequired,
-    id: PropTypes.string.isRequired
+    markerId: PropTypes.string.isRequired
   };
 
   constructor(props) {
@@ -109,11 +109,9 @@ class Marker extends Component {
    * Handles the mouseover event of this marker.
    */
   handleMouseOver() {
-    const { actions, id, google } = this.props;
+    const { actions, markerId, google } = this.props;
     const { size, scaledSize, hovered } = this.state;
-
-    actions.hoverMarker(id);
-
+  
     this.marker.setIcon({
       size: new google.maps.Size(size[0], size[1]),
       scaledSize: new google.maps.Size(scaledSize[0], scaledSize[1]),
@@ -121,16 +119,19 @@ class Marker extends Component {
       anchor: new google.maps.Point(size[0]/2, size[1]/2),
       url: hovered
     });
-    //this.smoothScrollToElement(id);
+
+    actions.hoverMarker(markerId);
+    this.smoothScrollToElement(markerId);
   }
 
   /**
    * Handles the mouseleave event of this marker.
    */
   handleMouseOut() {
-    const { actions, id, google } = this.props;
+    const { actions, markerId, google } = this.props;
     const { size, scaledSize, normal } = this.state;
-    actions.unhoverMarker(id);
+
+    actions.unhoverMarker(markerId);
 
     this.marker.setIcon({
       size: new google.maps.Size(size[0], size[1]),
@@ -145,9 +146,8 @@ class Marker extends Component {
    * Handles the cick event of this marker..
    */
   handleClick() {
-    const { actions, id } = this.props;
-    console.log('select marker');
-    actions.selectMarker(id);
+    const { actions, markerId } = this.props;
+    actions.selectMarker(markerId);
   }
 
   /**
@@ -157,8 +157,8 @@ class Marker extends Component {
    * @param {string} id - The id of the element to scroll to.
    */
   smoothScrollToElement(id) {
-    // const listEl = document.querySelector(`[data-markerItemId="${id}"]`);
-    // listEl.scrollIntoView({ behavior: 'smooth' });
+    const listEl = document.querySelector(`[data-markerItemId="${id}"]`);
+    listEl.scrollIntoView({ behavior: 'smooth' });
   }
 
   createSVGDataURIWithHeight(svgString, width, height) {

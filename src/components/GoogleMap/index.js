@@ -16,37 +16,32 @@ import Map from './Map';
  */
 class GoogleMap extends Component {
   /**
-   * When the component receives new props, check if the google prop is loaded and/or changed and save it globally.
-   * @param {object} newProps - The new props. 
+   * When the component receives new props we diff them against the old ones.
+   * If they changed we save them globally.
+   * @param {object} newProps - The new props.
    */
   componentWillReceiveProps(newProps) {
     const { config, gLib, actions } = this.props;
     if (newProps.gLib && newProps.gLib !== gLib) {
-      // Save google globally
       actions.saveGoogle(newProps.gLib);
     }
-
     if (newProps.config && JSON.stringify(newProps.config) !== JSON.stringify(config)) {
-      // Save the maps configuration globally
       actions.saveMapConfig(newProps.config);
     }
   }
 
   /**
-   * Just to be sure whe check if the google prop is already loaded when the component mounts.
-   * If its loaded, save it globally.
+   * Just to be sure we check if the google prop is already loaded when the component mounts.
+   * If its loaded, save it globally. The same applies for the map configuration property.
    */
   componentDidMount() {
     const { config, gLib, google, actions } = this.props;
 
     actions.toggleMapLoading(true);
 
-    // Save google globally
     if (google && gLib !== google) {
       actions.saveGoogle(google);
     }
-
-    // Save the maps configuration globally
     if (config) {
       actions.saveMapConfig(config);
     }

@@ -93,7 +93,26 @@ class Places extends Component {
     // Do the search...
     placesService.nearbySearch(request, (results, status) => {
       if (status === 'OK') {
-        actions.replaceMarkersWithNew(results);
+
+        // clean the results object (and cache external image sources)
+        process.env.TWT_APP_DEBUG && console.log(`%cPlaces API:`,'font-weight:bold;',`..normalize results...`);
+        const normalizedResults = results.map(result => {
+          return Object.assign({}, result, {
+            geometry: {
+              location: {
+                lat: result.geometry.location.lat(),
+                lng: result.geometry.location.lng(),
+              }
+            },
+            image: {
+              thumbnail: result.photos ? result.photos[0].getUrl({maxWidth: 150}) : result.icon,
+              medium: result.photos ? result.photos[0].getUrl({maxWidth: 800}) : null,
+              large: result.photos ? result.photos[0].getUrl({maxWidth: 1920}) : null,
+            }
+          })
+        });
+
+        actions.replaceMarkersWithNew(normalizedResults);
         actions.toggleMapLoading(false);
         process.env.TWT_APP_DEBUG && console.log(`%cPlaces API:`,'font-weight:bold;',`...nearby search finished!`);
       }

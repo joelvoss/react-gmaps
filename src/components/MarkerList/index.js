@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import List from './List';
+import Wrapper from './Wrapper';
+import ListItem from './ListItem';
 
 import * as markerActions from 'actions/markerActions';
 
@@ -36,7 +38,19 @@ class MarkerList extends Component {
 
   render() {
     const { marker } = this.props;
-    return <List marker={marker} handleMouseLeave={this.handleMouseLeave} handleMouseOver={this.handleMouseOver} />;
+    return (
+      <TransitionGroup component={Wrapper}>
+        {marker &&
+          marker.map(m =>
+            <ListItem
+              key={m.place_id}
+              marker={m}
+              handleMouseOver={this.handleMouseOver}
+              handleMouseLeave={this.handleMouseLeave}
+            />
+          )}
+      </TransitionGroup>
+    );
   }
 }
 

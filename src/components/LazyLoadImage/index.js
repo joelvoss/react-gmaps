@@ -1,41 +1,40 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Placeholder, { IntrinsicPlaceholder } from './Placeholder';
-import Image, { BluredImage } from './Image';
+import { Img, BluredImg } from './Image';
+import Wrapper from './Wrapper';
 
 class LazyLoadImage extends Component {
   static propTypes = {
     intrinsicHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     placeholder: PropTypes.string.isRequired,
-    src: PropTypes.string.isRequired,
-    alt: PropTypes.string.isRequired
+    src: PropTypes.string.isRequired
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      blurLoaded: false,
-      imageLoaded: false
+      loaded: false
     };
   }
 
+  componentDidMount() {
+    const img = new Image();
+    img.onload = () => this.setState({ loaded: true });
+    img.src = this.props.src;
+  }
+
   render() {
-    const { intrinsicHeight } = this.props;
-    const { blurLoaded, imageLoaded } = this.state;
+    const { intrinsicHeight, placeholder, src } = this.props;
+    const { loaded } = this.state;
 
     return (
-      <Placeholder className={this.props.className}>
-        <BluredImage
-          src={this.props.placeholder}
-          onLoad={() => this.setState({ blurLoaded: true })}
-          loaded={blurLoaded}
-        />
-
-        <IntrinsicPlaceholder paddingBottom={intrinsicHeight} />
-
-        <Image src={this.props.src} onLoad={() => this.setState({ imageLoaded: true })} loaded={imageLoaded} />
-      </Placeholder>
+      <Wrapper className={this.props.className} intrinsicHeight={intrinsicHeight}>
+        <BluredImg source={placeholder} />
+        {
+          loaded && <Img source={src} />
+        }
+      </Wrapper>
     );
   }
 }

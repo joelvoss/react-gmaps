@@ -5,7 +5,7 @@ import Wrapper from './Wrapper';
 import H1 from './H1';
 import Box from './Box';
 import GoogleMapContainer from 'components/GoogleMap';
-// import MarkerList from 'components/MarkerList';
+import MarkerList from 'components/MarkerList';
 
 // Basic map configuration object
 const mapConfig = {
@@ -26,7 +26,7 @@ class Root extends Component {
             ? <Wrapper>
                 <H1>React + GMaps</H1>
                 <Box>
-                  {/* <MarkerList /> */}
+                  <MarkerList /> 
                   <GoogleMapContainer
                     config={mapConfig}
                   />

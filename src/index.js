@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ThemeProvider } from 'styled-components';
 // Redux
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -9,6 +10,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 // Global styles
 import './global-styles.css';
+import theme from './theme';
 
 // Components & Container
 import Root from 'container/Root';
@@ -22,7 +24,9 @@ const store = createStore(globalStore, /* preloadedState, */ composeEnhancers(ap
 
 ReactDOM.render(
   <Provider store={store}>
-    <Root />
+    <ThemeProvider theme={theme}>
+      <Root />
+    </ThemeProvider>
   </Provider>,
   document.getElementById('root')
 );

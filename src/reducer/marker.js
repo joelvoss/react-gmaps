@@ -17,11 +17,10 @@ const marker = (state = initialState, action) => {
     case types.HOVER_MARKER:
       return Object.assign({}, state, {
         list: state.list.map(marker => {
-          if (marker.id === action.id) {
-            return Object.assign({}, marker, { hovered: true });
-          } else {
-            return marker;
+          if (marker.place_id === action.id) {
+            marker['hovered'] = true; 
           }
+          return marker;
         })
       });
 
@@ -29,11 +28,10 @@ const marker = (state = initialState, action) => {
     case types.UNHOVER_MARKER:
       return Object.assign({}, state, {
         list: state.list.map(marker => {
-          if (marker.id === action.id) {
-            return Object.assign({}, marker, { hovered: false });
-          } else {
-            return marker;
+          if (marker.place_id === action.id) {
+            marker['hovered'] = false; 
           }
+          return marker;
         })
       });
 

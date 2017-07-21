@@ -41,9 +41,9 @@ class Map extends Component {
             return (
               <Marker
                 key={item.place_id}
-                id={item.place_id}
-                lat={item.geometry.location.lat()}
-                lng={item.geometry.location.lng()}
+                markerId={item.place_id}
+                lat={item.geometry.location.lat}
+                lng={item.geometry.location.lng}
               />
             );
           })}
