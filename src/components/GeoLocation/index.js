@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-const withGeolocation = ({
+const withGeolocation = (
+  {
     positionOptions = {
       enableHighAccuracy: true,
       maximumAge: 0,
