@@ -9,6 +9,7 @@ import withGeolocation from 'components/withGeolocation';
 import Places from 'components/GoogleMap/Places';
 import MapWrapper from './MapWrapper';
 import Marker from 'components/GoogleMap/Marker';
+import CustomMarker from 'components/GoogleMap/CustomMarker';
 
 class Map extends Component {
   /**
@@ -48,7 +49,7 @@ class Map extends Component {
         {marker &&
           marker.map(item => {
             return (
-              <Marker
+              <CustomMarker
                 key={item.place_id}
                 markerId={item.place_id}
                 lat={item.geometry.location.lat}
@@ -74,4 +75,4 @@ const mapDispatchToProps = dispatch => ({
 
 const MapContainer = connect(mapStateToProps, mapDispatchToProps)(Map);
 
-export default withGeolocation({userDecisionTimeout: 10000})(MapContainer);
+export default withGeolocation({ userDecisionTimeout: 10000 })(MapContainer);
