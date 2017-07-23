@@ -8,8 +8,7 @@ import * as markerActions from 'actions/markerActions';
 import withGeolocation from 'components/withGeolocation';
 import Places from 'components/GoogleMap/Places';
 import MapWrapper from './MapWrapper';
-import Marker from 'components/GoogleMap/Marker';
-import CustomMarker from 'components/GoogleMap/CustomMarker';
+import OverlayView from 'components/GoogleMap/OverlayView';
 
 class Map extends Component {
   /**
@@ -49,7 +48,7 @@ class Map extends Component {
         {marker &&
           marker.map(item => {
             return (
-              <CustomMarker
+              <OverlayView
                 key={item.place_id}
                 markerId={item.place_id}
                 lat={item.geometry.location.lat}
