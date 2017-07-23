@@ -46,11 +46,12 @@ class Map extends Component {
       <MapWrapper innerRef={c => (this.root = c)}>
         <Places />
         {marker &&
-          marker.map(item => {
+          marker.map((item, i) => {
             return (
               <OverlayView
                 key={item.place_id}
                 markerId={item.place_id}
+                i={i}
                 lat={item.geometry.location.lat}
                 lng={item.geometry.location.lng}
               />

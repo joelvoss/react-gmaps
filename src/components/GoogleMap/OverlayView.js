@@ -57,11 +57,11 @@ class OverlayView extends Component {
    * This method gets called only once!
    */
   onAdd() {
-    const { markerId } = this.props;
+    const { markerId, i } = this.props;
 
     if (!this.overlayItem) {
       const html = renderToString(
-        <CustomMarker markerId={markerId} />
+        <CustomMarker markerId={markerId} delay={i} />
       );
       this.overlayItem = this.createElementFromString(html);
 
