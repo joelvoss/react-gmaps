@@ -7,6 +7,9 @@ import CustomMarker from 'components/CustomMarker';
 
 import * as markerActions from 'actions/markerActions';
 
+/**
+ * This component represents an overlay view.
+ */
 class OverlayView extends Component {
   constructor(props) {
     super(props);
@@ -21,6 +24,10 @@ class OverlayView extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
+  /**
+   * On mount, initialize the factory OverlayView instance provided by google
+   * and set the three default methods "onAdd", "draw" and "onRemove".
+   */
   componentDidMount() {
     const { google, map } = this.props;
 
@@ -33,10 +40,22 @@ class OverlayView extends Component {
     }
   }
 
+  /**
+   * When the component unmounts, set the map of the overlayview to null.
+   * This calls the "onRemove" method of this overlayview.
+   */
   componentWillUnmount() {
     this.overlayView.setMap(null);
   }
 
+  /**
+   * Google maps calls this method as soon as the overlayview can be drawn onto
+   * the overlay map pane. We do some react trickery here to import a stand-alone
+   * react component and append it to the appropriate google maps pane.
+   * Furthermore we create all event listener for this overlay.
+   * 
+   * This method gets called only once!
+   */
   onAdd() {
     const { markerId } = this.props;
 
@@ -53,6 +72,10 @@ class OverlayView extends Component {
     }
   }
 
+  /**
+   * This method gets called each time the current maps viewport or zoom-level changes.
+   * In here we convert the lat/lng values to pixel values and position the overlay.
+   */
   draw() {
     const { google, lat, lng } = this.props;
 
@@ -65,6 +88,11 @@ class OverlayView extends Component {
     }
   }
 
+  /**
+   * This method gets called as soon as we set the map property of
+   * the overlayview to null. We remove all event listener and delete the
+   * dom representation.
+   */
   onRemove() {
     console.log('onRemove');
     if (this.overlayItem) {
@@ -74,6 +102,11 @@ class OverlayView extends Component {
     }
   }
 
+  /**
+   * Helper method to create a dom node from a string representation.
+   * @param {string} string - The html as string representation
+   * @returns a valid dom node.
+   */
   createElementFromString(string) {
     const template = document.createElement('div');
     template.innerHTML = string;
@@ -81,7 +114,7 @@ class OverlayView extends Component {
   }
 
   /**
-   * Create event listeners for this marker.
+   * Create event listeners for this overlayview.
    */
   createEventListener() {
     this.overlayItem.addEventListener('click', this.handleClick);
@@ -90,7 +123,7 @@ class OverlayView extends Component {
   }
 
   /**
-   * Remove all event listeners of this marker.
+   * Remove all event listeners of this overlayview.
    */
   removeAllEventListener() {
     this.overlayItem.removeEventListener('click', this.handleClick);
@@ -99,7 +132,7 @@ class OverlayView extends Component {
   }
 
   /**
-   * Handles the mouseover event of this marker.
+   * Handles the mouseover event of this overlayview.
    */
   handleMouseOver() {
     const { actions, markerId } = this.props;
@@ -109,7 +142,7 @@ class OverlayView extends Component {
   }
 
   /**
-   * Handles the mouseleave event of this marker.
+   * Handles the mouseleave event of this overlayview.
    */
   handleMouseOut() {
     const { actions, markerId } = this.props;
@@ -117,7 +150,7 @@ class OverlayView extends Component {
   }
 
   /**
-   * Handles the cick event of this marker..
+   * Handles the cick event of this overlayview.
    */
   handleClick() {
     const { actions, markerId } = this.props;
