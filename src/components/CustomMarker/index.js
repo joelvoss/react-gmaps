@@ -36,7 +36,7 @@ const Inner = styled.div`
   width: 14px;
   height: 14px;
   background: #ed2461;
-  border: 3px solid #fbd4e1; 
+  border: 3px solid #fbd4e1;
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   pointer-events: none;

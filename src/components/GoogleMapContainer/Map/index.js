@@ -6,9 +6,9 @@ import * as mapActions from 'actions/googleActions';
 import * as markerActions from 'actions/markerActions';
 
 import withGeolocation from 'components/withGeolocation';
-import Places from 'components/GoogleMap/Places';
+import Places from 'components/GoogleMapContainer/Places';
 import MapWrapper from './MapWrapper';
-import OverlayView from 'components/GoogleMap/OverlayView';
+import OverlayView from 'components/GoogleMapContainer/OverlayView';
 
 class Map extends Component {
   /**

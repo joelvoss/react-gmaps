@@ -11,7 +11,7 @@ const withGoogleMap = ({ apiKey }) => WrappedComponent => {
       });
 
       this.state = {
-        gLib: null
+        googleLibrary: null
       };
     }
 
@@ -53,7 +53,7 @@ const withGoogleMap = ({ apiKey }) => WrappedComponent => {
      */
     scriptLoaded() {
       this.setState(() => ({
-        gLib: window.google
+        googleLibrary: window.google
       }));
     }
 

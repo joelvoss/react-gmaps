@@ -4,12 +4,16 @@ import Media from 'react-media';
 import Wrapper from './Wrapper';
 import H1 from './H1';
 import Box from './Box';
-import GoogleMapContainer from 'components/GoogleMap';
+import GoogleMapContainer from 'components/GoogleMapContainer';
 import MarkerList from 'components/MarkerList';
 
 // Basic map configuration object
 const mapConfig = {
+  apiKey: 'AIzaSyCej5h4pGqaunT1C8iM9QAle3A8N4Edf8I',
   map: {
+    zoom: 14,
+    default_lat: 51.2419782,
+    default_lng: 87.0937274,
     height: 600
   },
   icons: {
@@ -29,7 +33,7 @@ class Root extends Component {
             ? <Wrapper>
                 <H1>React + GMaps</H1>
                 <Box>
-                  <MarkerList /> 
+                  <MarkerList />
                   <GoogleMapContainer
                     config={mapConfig}
                   />

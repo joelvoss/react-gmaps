@@ -53,7 +53,7 @@ class OverlayView extends Component {
    * the overlay map pane. We do some react trickery here to import a stand-alone
    * react component and append it to the appropriate google maps pane.
    * Furthermore we create all event listener for this overlay.
-   * 
+   *
    * This method gets called only once!
    */
   onAdd() {
@@ -136,7 +136,7 @@ class OverlayView extends Component {
    */
   handleMouseOver() {
     const { actions, markerId } = this.props;
-  
+
     actions.hoverMarker(markerId);
     this.smoothScrollToElement(markerId);
   }
@@ -153,7 +153,7 @@ class OverlayView extends Component {
    * Handles the cick event of this overlayview.
    */
   handleClick() {
-    const { actions, markerId } = this.props;
+    const { /*actions,*/ markerId } = this.props;
     console.log(`marker with id ${markerId} clicked!`);
     //actions.selectMarker(markerId);
   }
