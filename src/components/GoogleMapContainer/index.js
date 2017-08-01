@@ -17,38 +17,27 @@ import Map from './Map';
 class GoogleMapContainer extends Component {
   // PropTypes
   static propTypes = {
-    config: PropTypes.object.isRequired
-  }
+    config: PropTypes.object.isRequired,
+    actions: PropTypes.object.isRequired,
+    google: PropTypes.object,
+    loading: PropTypes.bool.isRequired
+  };
 
-  constructor(props) {
-    super(props);
-
-    this.loadGoogleLibrary = this.loadGoogleLibrary.bind(this);
-  }
   /**
    * Just to be sure we check if the google prop is already loaded when the component mounts.
    * If its loaded, save it globally. The same applies for the map configuration property.
    */
   componentDidMount() {
     const { config, actions } = this.props;
-    // enable loading animation
-    actions.toggleMapLoading(true);
 
     if (config) {
       // save current map config globally
       actions.saveMapConfig(config);
-
       // load google maps <script>, if window.google is not available
       actions.loadGoogleMapsLibrary(config);
+      // geolocate the user
+      // ...
     }
-
-    // disable loading animation
-    actions.toggleMapLoading(false);
-  }
-
-  loadGoogleLibrary() {
-    console.log('loading google library...');
-
   }
 
   render() {
@@ -57,7 +46,7 @@ class GoogleMapContainer extends Component {
     return (
       <Wrapper minHeight={config.map.height}>
         <LoadingOverlay show={loading} />
-        {google && <Map />}
+        {/*{google && <Map google={google} />}*/}
       </Wrapper>
     );
   }
@@ -67,8 +56,7 @@ class GoogleMapContainer extends Component {
 const mapStateToProps = state => {
   return {
     loading: state.google.loading,
-    google: state.google.lib,
-    marker: state.marker.list
+    google: state.google.lib
   };
 };
 // Map dispatch method to all action creators
@@ -78,7 +66,3 @@ const mapDispatchToProps = dispatch => ({
 
 // connect current component with redux state
 export default connect(mapStateToProps, mapDispatchToProps)(GoogleMapContainer);
-
-// export default withGoogleMap({
-//   apiKey: 'AIzaSyCej5h4pGqaunT1C8iM9QAle3A8N4Edf8I'
-// })(GoogleMapContainer);
