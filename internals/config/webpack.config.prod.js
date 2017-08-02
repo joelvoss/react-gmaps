@@ -183,10 +183,7 @@ module.exports = {
       // This loader removes it for you, too.
       {
         test: /\.svg$/,
-        loader: 'svg-inline-loader',
-        options: {
-          removeSVGTagAttrs: false
-        }
+        loader: 'svg-inline-loader?removeSVGTagAttrs=false'
       }
       // ** STOP ** Are you adding a new loader?
       // Remember to add the new extension(s) to the "file" loader exclusion list.
