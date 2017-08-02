@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as googleActions from 'actions/googleActions';
+import combinedActions from 'actions/index';
 
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
@@ -36,12 +36,12 @@ class GoogleMapContainer extends Component {
       // load google maps <script>, if window.google is not available
       actions.loadGoogleMapsLibrary(config);
       // geolocate the user
-      // ...
+      actions.startGeolocation(config);
     }
   }
 
   render() {
-    const { google, loading, config } = this.props;
+    const { loading, config } = this.props;
 
     return (
       <Wrapper minHeight={config.map.height}>
@@ -61,7 +61,7 @@ const mapStateToProps = state => {
 };
 // Map dispatch method to all action creators
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(googleActions, dispatch)
+  actions: bindActionCreators(combinedActions, dispatch)
 });
 
 // connect current component with redux state

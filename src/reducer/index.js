@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
-import marker from './marker';
-import google from './google';
+import markerReducer from './marker';
+import googleReducer from './google';
+import geolocationReducer from './geolocation';
 
 const globalReducer = combineReducers({
-  marker,
-  google
+  marker: markerReducer,
+  google: googleReducer,
+  geolocation: geolocationReducer
 });
 
 export default globalReducer;

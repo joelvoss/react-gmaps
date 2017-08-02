@@ -5,7 +5,7 @@ const initialState = {
   selectedMarker: null
 };
 
-const marker = (state = initialState, action) => {
+const markerReducer = (state = initialState, action) => {
   switch (action.type) {
     // Replaces the current list of markers with a new list.
     case types.REPLACE_MARKERS_WITH_NEW:
@@ -18,7 +18,7 @@ const marker = (state = initialState, action) => {
       return Object.assign({}, state, {
         list: state.list.map(marker => {
           if (marker.place_id === action.id) {
-            marker['hovered'] = true; 
+            marker['hovered'] = true;
           }
           return marker;
         })
@@ -29,7 +29,7 @@ const marker = (state = initialState, action) => {
       return Object.assign({}, state, {
         list: state.list.map(marker => {
           if (marker.place_id === action.id) {
-            marker['hovered'] = false; 
+            marker['hovered'] = false;
           }
           return marker;
         })
@@ -46,4 +46,4 @@ const marker = (state = initialState, action) => {
   }
 };
 
-export default marker;
+export default markerReducer;

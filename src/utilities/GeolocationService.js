@@ -12,28 +12,27 @@ const GeolocationService = opts => {
     return new Promise((resolve, reject) => {
       // If the geolocation provider is not available, reject the promise.
       if (!geolocationProvider || !geolocationProvider.getCurrentPosition) {
-        reject();
+        reject({code: 1, message:'Geolocation Provider is not available!'});
       } else {
         // do the geolocation stuff
-        const timeout = options.userDecisionTimeout || null;
+        const timeout = options.userDecisionTimeout || 5000;
+
+        // start a timeout after which the geolocation process is automatically
+        // aborted.
         if (timeout) {
+          console.log('start cancel timer...');
           userDecisionTimeoutId = setTimeout(() => {
-            reject();
+            console.log('...timer finished...reject!');
+            reject({code: 1, message:'User did neither accepted nor declined the geolocation permission dialog!'});
           }, timeout);
         }
 
-        return getPosition();
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: Infinity
+        });
       }
-    });
-  }
-
-  const getPosition = () => {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: Infinity
-      });
     });
   }
 
@@ -46,10 +45,18 @@ const GeolocationService = opts => {
   return new Promise((resolve, reject) =>
     getLocation()
       .then(position => {
+        // we have a position! cancel our reject timeout.
         cancelUserDecisionTimeout();
-        console.log(position);
+        const pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        resolve(pos);
       })
-      .catch(err => console.error(err))
+      .catch(err => {
+        cancelUserDecisionTimeout();
+        reject(err);
+      })
   );
 }
 

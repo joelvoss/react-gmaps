@@ -8,7 +8,7 @@ const initialState = {
   loading: false
 };
 
-const map = (state = initialState, action) => {
+const googleReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.SAVE_GOOGLE:
       return Object.assign({}, state, {
@@ -40,4 +40,4 @@ const map = (state = initialState, action) => {
   }
 };
 
-export default map;
+export default googleReducer;
