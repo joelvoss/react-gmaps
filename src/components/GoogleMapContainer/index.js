@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 
-import combinedActions from 'actions/index';
+// Google Library Service
+import GoogleLibraryService from 'utilities/GoogleLibraryService';
+import GeolocationService from 'utilities/GeolocationService';
 
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
@@ -17,52 +17,129 @@ import Map from './Map';
 class GoogleMapContainer extends Component {
   // PropTypes
   static propTypes = {
-    config: PropTypes.object.isRequired,
-    actions: PropTypes.object.isRequired,
-    google: PropTypes.object,
-    loading: PropTypes.bool.isRequired
+    config: PropTypes.object.isRequired
+  };
+
+  // State
+  state = {
+    loading: true,
+    error: false,
+    google: null,
+    map: null,
+    places: null,
+    position: {
+      lat: 51.2419782,
+      lng: 7.0937274
+    }
   };
 
   /**
-   * Just to be sure we check if the google prop is already loaded when the component mounts.
-   * If its loaded, save it globally. The same applies for the map configuration property.
+   * Lifecycle hook that fires, when the component mounts for the first time.
    */
-  componentDidMount() {
-    const { config, actions } = this.props;
+  async componentDidMount() {
+    const { config } = this.props;
 
-    if (config) {
-      // save current map config globally
-      actions.saveMapConfig(config);
-      // load google maps <script>, if window.google is not available
-      actions.loadGoogleMapsLibrary(config);
-      // geolocate the user
-      actions.startGeolocation(config);
+    try {
+      // Start geolocation, of the config has specified it
+      if (config.geolocation) {
+        process.env.TWT_APP_DEBUG &&
+          console.log(`%cGoogleMapContainer:`, 'font-weight:bold;', `Subscribe to watchPosition`);
+
+        // Subscribe to the navigator.geolocation watchPosition observable
+        // This observable actually never "completes", so the complete callback is omitted.
+        this.geolocationService = GeolocationService(config.geolocation).subscribe(
+          position => this.setState({ position }),
+          error => this.setState({ error })
+        );
+      }
+
+      // Load the google maps library
+      process.env.TWT_APP_DEBUG &&
+        console.log(`%cGoogleMapContainer:`, 'font-weight:bold;', `Load the google maps library.`);
+
+      const google = await GoogleLibraryService(config);
+
+      // Initialize the map
+      process.env.TWT_APP_DEBUG &&
+        console.log(
+          `%cGoogleMapContainer:`,
+          'font-weight:bold;',
+          `Initialize Map with pos: lat ${this.state.position.lat}; lng ${this.state.position.lng}.`
+        );
+
+      const map = await new google.maps.Map(this.mapRef, {
+        zoom: config.map.zoom,
+        center: { lat: this.state.position.lat, lng: this.state.position.lng }
+      });
+
+      // Initialize the places library
+      process.env.TWT_APP_DEBUG &&
+        console.log(`%cGoogleMapContainer:`, 'font-weight:bold;', `Initialize the places library.`);
+
+      const places = await new google.maps.places.PlacesService(map);
+
+      this.setState({
+        google,
+        map,
+        places
+      });
+    } catch (error) {
+      console.error(error);
+      this.setState({ error });
     }
   }
 
+  /**
+   * Lifecycle hook that fires on every prop or state update.
+   * @param {object} prevProps - Previous props.
+   * @param {object} prevState - Previous state.
+   */
+  componentDidUpdate(prevProps, prevState) {
+    const { position, map } = this.state;
+    // if we have a valid map object and the position lat/lng values changed,
+    // update the map position
+    if (map && JSON.stringify(position) !== JSON.stringify(prevState.position)) {
+      this.updateMapCenter({ lat: position.lat, lng: position.lng });
+    }
+  }
+
+  /**
+   * Clean up when the component unmounts.
+   */
+  componentWillUnmount() {
+    this.geolocationService.unsubscribe();
+  }
+
+  /**
+   * Updates the current center position of the google map
+   */
+  updateMapCenter = position => {
+    const { map } = this.state;
+
+    process.env.TWT_APP_DEBUG &&
+      console.log(
+        `%cGoogleMapContainer:`,
+        'font-weight:bold;',
+        `Update map position to lat ${position.lat}; lng ${position.lng}`
+      );
+
+    map.setCenter(position);
+  };
+
   render() {
-    const { loading, config } = this.props;
+    const { config } = this.props;
+    const { loading } = this.state;
 
     return (
       <Wrapper minHeight={config.map.height}>
         <LoadingOverlay show={loading} />
-        {/*{google && <Map google={google} />}*/}
+        <Map innerRef={c => (this.mapRef = c)}>
+          {/* Place Marker here  */}
+        </Map>
       </Wrapper>
     );
   }
 }
 
-// Map redux state to props
-const mapStateToProps = state => {
-  return {
-    loading: state.google.loading,
-    google: state.google.lib
-  };
-};
-// Map dispatch method to all action creators
-const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(combinedActions, dispatch)
-});
-
 // connect current component with redux state
-export default connect(mapStateToProps, mapDispatchToProps)(GoogleMapContainer);
+export default GoogleMapContainer;

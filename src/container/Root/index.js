@@ -12,8 +12,6 @@ const mapConfig = {
   apiKey: 'AIzaSyCej5h4pGqaunT1C8iM9QAle3A8N4Edf8I',
   map: {
     zoom: 14,
-    default_lat: 51.2419782,
-    default_lng: 87.0937274,
     height: 600
   },
   icons: {
@@ -21,6 +19,11 @@ const mapConfig = {
       normal: require('globalAssets/markerIcons/info_normal.svg'),
       hovered: require('globalAssets/markerIcons/info_hovered.svg')
     }
+  },
+  geolocation: {
+    lat: 51.2419782,
+    lng: 7.0937274,
+    timeout: 5000
   }
 }
 
