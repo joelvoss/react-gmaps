@@ -7,7 +7,7 @@ import GeolocationService from 'utilities/GeolocationService';
 
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
-import Map from './Map';
+import Map, { MapEventService } from './Map';
 
 /**
  * This component represents the Google Maps Wrapper.
@@ -78,6 +78,16 @@ class GoogleMapContainer extends Component {
 
       const places = await new google.maps.places.PlacesService(map);
 
+      // Subscribe to different map events, e.g. 'idle'.
+      this.mapService = MapEventService({ map, places }).subscribe(
+        res => {
+          console.log(res);
+        },
+        error => {
+          console.error(error);
+        }
+      );
+
       this.setState({
         google,
         map,
@@ -108,6 +118,7 @@ class GoogleMapContainer extends Component {
    */
   componentWillUnmount() {
     this.geolocationService.unsubscribe();
+    this.this.mapService.unsubscribe();
   }
 
   /**
