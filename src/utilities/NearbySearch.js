@@ -3,26 +3,25 @@
  * https://developers.google.com/maps/documentation/javascript/places?hl=de#place_search_requests
  */
 const NearbySearch = options => {
-  if (!options.map) {
-    throw new Error('Map reference missing!');
-  }
-  if (!options.places) {
-    throw new Error('Places library reference missing!');
-  }
-
-  process.env.TWT_APP_DEBUG &&
+  // Do the search...
+  return new Promise((resolve, reject) => {
+    process.env.TWT_APP_DEBUG &&
     console.log(`%cNearbySearch:`, 'font-weight:bold;', `Do a nearby search...`);
 
-  // Places request configuration object
-  const request = {
-    location: options.map.getCenter(),
-    radius: '5000',
-    types: ['store']
-  };
+    if (!options.map) {
+      reject('Map reference missing!');
+    }
+    if (!options.places) {
+      reject('Places library reference missing!');
+    }
 
-  // Do the search...
+    // Places request configuration object
+    const request = {
+      location: options.map.getCenter(),
+      radius: '5000',
+      types: ['store']
+    };
 
-  return new Promise((resolve, reject) => {
     options.places.nearbySearch(request, (results, status) => {
       if (status === 'OK') {
         // clean the results object (and cache external image sources)

@@ -31,8 +31,12 @@ export const MapEventService = props => {
     }
 
     idleListener = props.map.addListener('idle', async () => {
-      const nearbySearchResults = await NearbySearch(props);
-      emitAction('idle', 'nearby_search', nearbySearchResults);
+      try {
+        const nearbySearchResults = await NearbySearch(props);
+        emitAction('idle', 'nearby_search_success', nearbySearchResults);
+      } catch (err) {
+        emitAction('idle', 'nearby_search_error', err);
+      }
     });
 
     /**

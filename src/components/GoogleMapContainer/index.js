@@ -20,6 +20,11 @@ class GoogleMapContainer extends Component {
     config: PropTypes.object.isRequired
   };
 
+  static defaultProps = {
+    config: {},
+    subscriptions: []
+  }
+
   // State
   state = {
     loading: true,
@@ -37,7 +42,7 @@ class GoogleMapContainer extends Component {
    * Lifecycle hook that fires, when the component mounts for the first time.
    */
   async componentDidMount() {
-    const { config } = this.props;
+    const { config, subscriptions } = this.props;
 
     try {
       // Start geolocation, of the config has specified it
@@ -47,10 +52,10 @@ class GoogleMapContainer extends Component {
 
         // Subscribe to the navigator.geolocation watchPosition observable
         // This observable actually never "completes", so the complete callback is omitted.
-        this.geolocationService = GeolocationService(config.geolocation).subscribe(
+        subscriptions.push(GeolocationService(config.geolocation).subscribe(
           position => this.setState({ position }),
           error => this.setState({ error })
-        );
+        ));
       }
 
       // Load the google maps library
@@ -79,14 +84,14 @@ class GoogleMapContainer extends Component {
       const places = await new google.maps.places.PlacesService(map);
 
       // Subscribe to different map events, e.g. 'idle'.
-      this.mapService = MapEventService({ map, places }).subscribe(
+      subscriptions.push(MapEventService({ map, places }).subscribe(
         res => {
           console.log(res);
         },
         error => {
           console.error(error);
         }
-      );
+      ));
 
       this.setState({
         google,
@@ -117,8 +122,10 @@ class GoogleMapContainer extends Component {
    * Clean up when the component unmounts.
    */
   componentWillUnmount() {
-    this.geolocationService.unsubscribe();
-    this.this.mapService.unsubscribe();
+    const { subscriptions } = this.props; 
+    for (let i = 0; i < subscriptions.length; i++) {
+      subscriptions[i].unsubscribe();
+    }
   }
 
   /**
