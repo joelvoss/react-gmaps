@@ -8,6 +8,7 @@ import GeolocationService from 'utilities/GeolocationService';
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
 import Map, { MapEventService } from './Map';
+import OverlayView from './OverlayView';
 
 /**
  * This component represents the Google Maps Wrapper.
@@ -23,7 +24,7 @@ class GoogleMapContainer extends Component {
   static defaultProps = {
     config: {},
     subscriptions: []
-  }
+  };
 
   // State
   state = {
@@ -35,7 +36,8 @@ class GoogleMapContainer extends Component {
     position: {
       lat: 51.2419782,
       lng: 7.0937274
-    }
+    },
+    marker: null
   };
 
   /**
@@ -52,10 +54,12 @@ class GoogleMapContainer extends Component {
 
         // Subscribe to the navigator.geolocation watchPosition observable
         // This observable actually never "completes", so the complete callback is omitted.
-        subscriptions.push(GeolocationService(config.geolocation).subscribe(
-          position => this.setState({ position }),
-          error => this.setState({ error })
-        ));
+        subscriptions.push(
+          GeolocationService(config.geolocation).subscribe(
+            position => this.setState({ position }),
+            error => this.setState({ error })
+          )
+        );
       }
 
       // Load the google maps library
@@ -84,19 +88,24 @@ class GoogleMapContainer extends Component {
       const places = await new google.maps.places.PlacesService(map);
 
       // Subscribe to different map events, e.g. 'idle'.
-      subscriptions.push(MapEventService({ map, places }).subscribe(
-        res => {
-          console.log(res);
-        },
-        error => {
-          console.error(error);
-        }
-      ));
+      subscriptions.push(
+        MapEventService({ map, places }).subscribe(
+          success => {
+            if (success.type === 'idle') {
+              this.handleMapIdleEvent(success.action, success.payload);
+            }
+          },
+          error => {
+            console.error(error);
+          }
+        )
+      );
 
       this.setState({
         google,
         map,
-        places
+        places,
+        loading: false
       });
     } catch (error) {
       console.error(error);
@@ -122,14 +131,31 @@ class GoogleMapContainer extends Component {
    * Clean up when the component unmounts.
    */
   componentWillUnmount() {
-    const { subscriptions } = this.props; 
+    const { subscriptions } = this.props;
     for (let i = 0; i < subscriptions.length; i++) {
       subscriptions[i].unsubscribe();
     }
   }
 
   /**
-   * Updates the current center position of the google map
+   * Handle the idle event of the google map component.
+   * @param {string} action - The action type
+   * @param {any} payload - The payload of the action
+   */
+  handleMapIdleEvent = (action, payload) => {
+    if (action === 'nearby_search_success') {
+      process.env.TWT_APP_DEBUG &&
+        console.log(`%cGoogleMapContainer:`, 'font-weight:bold;', 'Update marker', payload);
+
+      this.setState({
+        marker: payload
+      });
+    }
+  };
+
+  /**
+   * Updates the current center position of the google map.
+   * @param {object} - Position object, consists of a lat and lng value.
    */
   updateMapCenter = position => {
     const { map } = this.state;
@@ -146,13 +172,27 @@ class GoogleMapContainer extends Component {
 
   render() {
     const { config } = this.props;
-    const { loading } = this.state;
+    const { google, map, loading, marker } = this.state;
 
     return (
       <Wrapper minHeight={config.map.height}>
         <LoadingOverlay show={loading} />
         <Map innerRef={c => (this.mapRef = c)}>
-          {/* Place Marker here  */}
+          {/* Place Marker here  */
+          marker &&
+            marker.map((m, i) => {
+              return (
+                <OverlayView
+                  key={i}
+                  google={google}
+                  map={map}
+                  marker={m}
+                  markerId={m.id}
+                  lat={m.geometry.location.lat}
+                  lng={m.geometry.location.lng}
+                />
+              );
+            })}
         </Map>
       </Wrapper>
     );

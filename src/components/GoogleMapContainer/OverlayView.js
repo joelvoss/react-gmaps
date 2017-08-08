@@ -1,28 +1,18 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { renderToString } from 'react-dom/server';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-
 import CustomMarker from 'components/CustomMarker';
-
-import * as markerActions from 'actions/markerActions';
 
 /**
  * This component represents an overlay view.
  */
 class OverlayView extends Component {
-  constructor(props) {
-    super(props);
 
-    this.onAdd = this.onAdd.bind(this);
-    this.draw = this.draw.bind(this);
-    this.onRemove = this.onRemove.bind(this);
-
-    this.removeAllEventListener = this.removeAllEventListener.bind(this);
-    this.handleMouseOver = this.handleMouseOver.bind(this);
-    this.handleMouseOut = this.handleMouseOut.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-  }
+  static propTypes = {
+    google: PropTypes.object.isRequired,
+    map: PropTypes.object.isRequired,
+    marker: PropTypes.object.isRequired
+  };
 
   /**
    * On mount, initialize the factory OverlayView instance provided by google
@@ -31,13 +21,11 @@ class OverlayView extends Component {
   componentDidMount() {
     const { google, map } = this.props;
 
-    if (google && map) {
-      this.overlayView = new google.maps.OverlayView();
-      this.overlayView.onAdd = this.onAdd;
-      this.overlayView.draw = this.draw;
-      this.overlayView.onRemove = this.onRemove;
-      this.overlayView.setMap(map);
-    }
+    this.overlayView = new google.maps.OverlayView();
+    this.overlayView.onAdd = this.onAdd;
+    this.overlayView.draw = this.draw;
+    this.overlayView.onRemove = this.onRemove;
+    this.overlayView.setMap(map);
   }
 
   /**
@@ -56,12 +44,12 @@ class OverlayView extends Component {
    *
    * This method gets called only once!
    */
-  onAdd() {
-    const { markerId, i } = this.props;
+  onAdd = () => {
+    const { marker } = this.props;
 
     if (!this.overlayItem) {
       const html = renderToString(
-        <CustomMarker markerId={markerId} delay={i} />
+        <CustomMarker markerId={marker.id} delay={0} />
       );
       this.overlayItem = this.createElementFromString(html);
 
@@ -76,10 +64,10 @@ class OverlayView extends Component {
    * This method gets called each time the current maps viewport or zoom-level changes.
    * In here we convert the lat/lng values to pixel values and position the overlay.
    */
-  draw() {
-    const { google, lat, lng } = this.props;
+  draw = () => {
+    const { google, marker } = this.props;
 
-    const latlng = new google.maps.LatLng(lat, lng);
+    const latlng = new google.maps.LatLng(marker.geometry.location.lat, marker.geometry.location.lng);
     const point = this.overlayView.getProjection().fromLatLngToDivPixel(latlng);
 
     if (point) {
@@ -93,7 +81,7 @@ class OverlayView extends Component {
    * the overlayview to null. We remove all event listener and delete the
    * dom representation.
    */
-  onRemove() {
+  onRemove = () => {
     console.log('onRemove');
     if (this.overlayItem) {
       this.removeAllEventListener();
@@ -107,56 +95,48 @@ class OverlayView extends Component {
    * @param {string} string - The html as string representation
    * @returns a valid dom node.
    */
-  createElementFromString(string) {
+  createElementFromString = (string) => {
     const template = document.createElement('div');
     template.innerHTML = string;
     return template.firstChild;
-  }
+  };
 
   /**
    * Create event listeners for this overlayview.
    */
-  createEventListener() {
+  createEventListener = () => {
     this.overlayItem.addEventListener('click', this.handleClick);
     this.overlayItem.addEventListener('mouseover', this.handleMouseOver);
     this.overlayItem.addEventListener('mouseout', this.handleMouseOut);
-  }
+  };
 
   /**
    * Remove all event listeners of this overlayview.
    */
-  removeAllEventListener() {
+  removeAllEventListener = () => {
     this.overlayItem.removeEventListener('click', this.handleClick);
     this.overlayItem.removeEventListener('mouseover', this.handleMouseOver);
     this.overlayItem.removeEventListener('mouseout', this.handleMouseOut);
-  }
+  };
 
   /**
    * Handles the mouseover event of this overlayview.
    */
-  handleMouseOver() {
-    const { actions, markerId } = this.props;
-
-    actions.hoverMarker(markerId);
-    this.smoothScrollToElement(markerId);
-  }
+  handleMouseOver = () => {};
 
   /**
    * Handles the mouseleave event of this overlayview.
    */
-  handleMouseOut() {
-    const { actions, markerId } = this.props;
-    actions.unhoverMarker(markerId);
-  }
+  handleMouseOut = () => {};
 
   /**
    * Handles the cick event of this overlayview.
    */
-  handleClick() {
-    const { /*actions,*/ markerId } = this.props;
-    console.log(`marker with id ${markerId} clicked!`);
+  handleClick = () => {
+    const { marker } = this.props;
+    console.log(`marker with id ${marker.id} clicked!`);
     //actions.selectMarker(markerId);
-  }
+  };
 
   /**
    * Smooth scroll to the element with a given id
@@ -164,28 +144,14 @@ class OverlayView extends Component {
    * Uses the smoothscroll polyfill, see https://github.com/iamdustan/smoothscroll
    * @param {string} id - The id of the element to scroll to.
    */
-  smoothScrollToElement(id) {
+  smoothScrollToElement = (id) => {
     const listEl = document.querySelector(`[data-markerItemId="${id}"]`);
     listEl.scrollIntoView({ behavior: 'smooth' });
-  }
+  };
 
   render() {
     return null;
   }
 }
 
-// Maps redux state to props.
-const mapStateToProps = state => {
-  return {
-    google: state.google.lib,
-    map: state.google.map,
-    mapConfig: state.google.config
-  };
-};
-
-// Maps dispatch method to props.
-const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(markerActions, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(OverlayView);
+export default OverlayView;
