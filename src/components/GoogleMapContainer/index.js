@@ -10,7 +10,7 @@ import nearbySearch from 'utilities/nearbySearch';
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
 import Map from './Map';
-import OverviewLayer from './OverviewLayer';
+import OverlayView from './OverlayView';
 
 /**
  * This component represents the Google Maps Wrapper.
@@ -151,7 +151,7 @@ class GoogleMapContainer extends Component {
           marker &&
             marker.map(m => {
               return (
-                <OverviewLayer
+                <OverlayView
                   key={m.id}
                   google={google}
                   map={map}
