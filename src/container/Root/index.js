@@ -24,7 +24,8 @@ const mapConfig = {
     lat: 51.2419782,
     lng: 7.0937274,
     timeout: 5000
-  }
+  },
+  libraries: ['places']
 }
 
 class Root extends Component {

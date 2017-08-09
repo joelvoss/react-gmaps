@@ -4,11 +4,13 @@ import PropTypes from 'prop-types';
 // Google Library Service
 import GoogleLibraryService from 'utilities/GoogleLibraryService';
 import GeolocationService from 'utilities/GeolocationService';
+import MapEventService from 'utilities/MapEventService';
+import nearbySearch from 'utilities/nearbySearch';
 
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
-import Map, { MapEventService } from './Map';
-import OverlayView from './OverlayView';
+import Map from './Map';
+import OverviewLayer from './OverviewLayer';
 
 /**
  * This component represents the Google Maps Wrapper.
@@ -32,7 +34,6 @@ class GoogleMapContainer extends Component {
     error: false,
     google: null,
     map: null,
-    places: null,
     position: {
       lat: 51.2419782,
       lng: 7.0937274
@@ -42,16 +43,16 @@ class GoogleMapContainer extends Component {
 
   /**
    * Lifecycle hook that fires, when the component mounts for the first time.
+   * We use async/await in the mounting process.
    */
   async componentDidMount() {
     const { config, subscriptions } = this.props;
 
     try {
-      // Start geolocation, of the config has specified it
+      // Start geolocation, of the config has specified it.
+      // We do this as the first thing, because the use location is a vital information
+      // and doesn't rely on the google api.
       if (config.geolocation) {
-        process.env.TWT_APP_DEBUG &&
-          console.log(`%cGoogleMapContainer:`, 'font-weight:bold;', `Subscribe to watchPosition`);
-
         // Subscribe to the navigator.geolocation watchPosition observable
         // This observable actually never "completes", so the complete callback is omitted.
         subscriptions.push(
@@ -63,48 +64,40 @@ class GoogleMapContainer extends Component {
       }
 
       // Load the google maps library
-      process.env.TWT_APP_DEBUG &&
-        console.log(`%cGoogleMapContainer:`, 'font-weight:bold;', `Load the google maps library.`);
-
       const google = await GoogleLibraryService(config);
 
       // Initialize the map
-      process.env.TWT_APP_DEBUG &&
-        console.log(
-          `%cGoogleMapContainer:`,
-          'font-weight:bold;',
-          `Initialize Map with pos: lat ${this.state.position.lat}; lng ${this.state.position.lng}.`
-        );
-
       const map = await new google.maps.Map(this.mapRef, {
         zoom: config.map.zoom,
         center: { lat: this.state.position.lat, lng: this.state.position.lng }
       });
 
-      // Initialize the places library
-      process.env.TWT_APP_DEBUG &&
-        console.log(`%cGoogleMapContainer:`, 'font-weight:bold;', `Initialize the places library.`);
-
-      const places = await new google.maps.places.PlacesService(map);
+      // Initialize all libraries, that the user specified in the config.
+      // We may need specific libraries later on, so we safe them in the
+      // usedLibraries
+      const usedLibraries = {};
+      if (config.libraries && config.libraries.indexOf('places') !== -1) {
+        usedLibraries['places'] = await new google.maps.places.PlacesService(map);
+      }
 
       // Subscribe to different map events, e.g. 'idle'.
+      const eventService = new MapEventService({ map, google });
+      const idleEvent = eventService.createEvent('idle');
       subscriptions.push(
-        MapEventService({ map, places }).subscribe(
-          success => {
-            if (success.type === 'idle') {
-              this.handleMapIdleEvent(success.action, success.payload);
-            }
-          },
-          error => {
-            console.error(error);
-          }
-        )
+        idleEvent.subscribe(() => {
+          nearbySearch({ map, places: usedLibraries['places'] })
+            .then(results => {
+              this.setState({
+                marker: results
+              });
+            })
+            .catch(err => console.error(err));
+        })
       );
 
       this.setState({
         google,
         map,
-        places,
         loading: false
       });
     } catch (error) {
@@ -138,35 +131,11 @@ class GoogleMapContainer extends Component {
   }
 
   /**
-   * Handle the idle event of the google map component.
-   * @param {string} action - The action type
-   * @param {any} payload - The payload of the action
-   */
-  handleMapIdleEvent = (action, payload) => {
-    if (action === 'nearby_search_success') {
-      process.env.TWT_APP_DEBUG &&
-        console.log(`%cGoogleMapContainer:`, 'font-weight:bold;', 'Update marker', payload);
-
-      this.setState({
-        marker: payload
-      });
-    }
-  };
-
-  /**
    * Updates the current center position of the google map.
    * @param {object} - Position object, consists of a lat and lng value.
    */
   updateMapCenter = position => {
     const { map } = this.state;
-
-    process.env.TWT_APP_DEBUG &&
-      console.log(
-        `%cGoogleMapContainer:`,
-        'font-weight:bold;',
-        `Update map position to lat ${position.lat}; lng ${position.lng}`
-      );
-
     map.setCenter(position);
   };
 
@@ -180,16 +149,17 @@ class GoogleMapContainer extends Component {
         <Map innerRef={c => (this.mapRef = c)}>
           {/* Place Marker here  */
           marker &&
-            marker.map((m, i) => {
+            marker.map(m => {
               return (
-                <OverlayView
-                  key={i}
+                <OverviewLayer
+                  key={m.id}
                   google={google}
                   map={map}
-                  marker={m}
-                  markerId={m.id}
-                  lat={m.geometry.location.lat}
-                  lng={m.geometry.location.lng}
+                  data={{
+                    lat: m.geometry.location.lat,
+                    lng: m.geometry.location.lng,
+                    id: m.id
+                  }}
                 />
               );
             })}

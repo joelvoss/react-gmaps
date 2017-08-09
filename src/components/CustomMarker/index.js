@@ -19,14 +19,35 @@ const pulse = keyframes`
   }
 `;
 
+const fadeIn = keyframes`
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+`;
+
 const Marker = styled.div.attrs({
   'data-marker-id': props => props.markerId
 })`
   position: absolute;
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   border-radius: 50%;
+  opacity: 0;
+  animation: ${fadeIn} 0.2s ease-in forwards;
+  animation-delay: ${props => `${props.delay}s`};
+  pointer-events:all;
+
+  transition: transform 0.07s ease-in;
+  backface-visibility: hidden;
+  
+  &:hover {
+    transform: scale(1.2);
+  }
 `;
 
 const Inner = styled.div`
@@ -59,8 +80,13 @@ const Pulse = styled.div`
 
 const CustomMarker = props => {
   const { markerId, delay } = props;
+
+  const event = () => {
+    console.log(markerId);
+  };
+
   return (
-    <Marker markerId={markerId}>
+    <Marker onClick={event}>
       <Pulse delay={delay * 0.5}/>
       <Inner />
     </Marker>

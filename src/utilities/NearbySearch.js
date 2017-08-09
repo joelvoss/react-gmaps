@@ -2,12 +2,9 @@
  * Does a nearby search.
  * https://developers.google.com/maps/documentation/javascript/places?hl=de#place_search_requests
  */
-const NearbySearch = options => {
+const nearbySearch = options => {
   // Do the search...
   return new Promise((resolve, reject) => {
-    process.env.TWT_APP_DEBUG &&
-    console.log(`%cNearbySearch:`, 'font-weight:bold;', `Do a nearby search...`);
-
     if (!options.map) {
       reject('Map reference missing!');
     }
@@ -25,8 +22,6 @@ const NearbySearch = options => {
     options.places.nearbySearch(request, (results, status) => {
       if (status === 'OK') {
         // clean the results object (and cache external image sources)
-        process.env.TWT_APP_DEBUG &&
-          console.log(`%cNearbySearch:`, 'font-weight:bold;', `..normalize results...`);
         const normalizedResults = results.map(result => {
           return Object.assign({}, result, {
             geometry: {
@@ -43,8 +38,6 @@ const NearbySearch = options => {
           });
         });
 
-        process.env.TWT_APP_DEBUG &&
-          console.log(`%cNearbySearch:`, 'font-weight:bold;', `...nearby search finished!`);
         resolve(normalizedResults);
       } else {
         reject(status);
@@ -53,4 +46,4 @@ const NearbySearch = options => {
   });
 };
 
-export default NearbySearch;
+export default nearbySearch;
