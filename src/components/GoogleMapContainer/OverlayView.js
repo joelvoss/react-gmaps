@@ -62,7 +62,7 @@ class OverlayView extends Component {
    * This method gets called only once!
    */
   onAdd = () => {
-    const { data } = this.props;
+    const { data, map } = this.props;
 
     if (!this.overlayItem) {
       // We create an empty DOM node...
@@ -70,7 +70,7 @@ class OverlayView extends Component {
       // ...and render a custom react component inside it.
       ReactDOM.render(
         <ThemeProvider theme={theme}>
-          <CustomMarker data={data} delay={Math.floor(Math.random() * 10) + 1} />
+          <CustomMarker data={data} map={map} delay={Math.floor(Math.random() * 10) + 1} />
         </ThemeProvider>,
         this.overlayItem
       );
@@ -87,7 +87,7 @@ class OverlayView extends Component {
   draw = () => {
     const { google, data } = this.props;
 
-    const latlng = new google.maps.LatLng(data.lat, data.lng);
+    const latlng = new google.maps.LatLng(data.geometry.location.lat, data.geometry.location.lng);
     const point = this.overlayView.getProjection().fromLatLngToDivPixel(latlng);
     if (point) {
       this.overlayItem.style.left = point.x + 'px';

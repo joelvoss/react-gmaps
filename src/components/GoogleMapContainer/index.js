@@ -239,11 +239,7 @@ class GoogleMapContainer extends Component {
                 key={m.id}
                 google={google}
                 map={map}
-                data={{
-                  lat: m.geometry.location.lat,
-                  lng: m.geometry.location.lng,
-                  id: m.id
-                }}
+                data={m}
               />
             )}
         </Map>

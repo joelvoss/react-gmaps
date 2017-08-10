@@ -31,9 +31,11 @@ const pulse = keyframes`
 const fadeIn = keyframes`
   0% {
     opacity: 0;
+    transform: scale(0);
   }
   100% {
     opacity: 1;
+    transform: scale(1);
   }
 `;
 
@@ -44,18 +46,17 @@ const Marker = styled.div`
   bottom: 0;
   left: 0;
   border-radius: 50%;
+
+  transform: scale(0);
   opacity: 0;
+
   animation: ${fadeIn} 0.2s ease-in forwards;
   animation-delay: ${props => `${props.delay}s`};
-  pointer-events: all;
 
-  transition: ${props => props.open ? 'transform 0s' : 'transform 0.07s ease-in'};
   backface-visibility: hidden;
-
   z-index: ${props => props.open ? '9999' : '1'};
   
   &:hover {
-    transform: ${props => props.open ? 'scale(1)' : 'scale(1.2)'};
     z-index: 9999;
   }
 `;
@@ -70,7 +71,14 @@ const Inner = styled.div`
   border: 3px solid #fbd4e1;
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
+  cursor: pointer;
+  pointer-events: auto;
+
+  transition: ${props => props.open ? 'transform 0s' : 'transform 0.07s ease-in'};
+
+  &:hover {
+    transform: ${props => props.open ? 'scale(1)' : 'scale(1.2)'};
+  }
 `;
 
 const Pulse = styled.div`
@@ -93,7 +101,8 @@ class CustomMarker extends Component {
   // PropTypes
   static propTypes = {
     delay: PropTypes.number.isRequired,
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
+    map: PropTypes.object.isRequired
   }
 
   // Components state.
@@ -102,17 +111,23 @@ class CustomMarker extends Component {
   }
 
   /**
-   * Toggles the open state of the info window.
+   * Sets the open state of the infowindow to true.
    */
-  handleOpen = (action) => {
+  handleOpen = () => {
+    const { data, map } = this.props;
+    
+    // pan the map to the current marker location
+    map.panTo({lat: data.geometry.location.lat, lng: data.geometry.location.lng});
+
     this.setState({open: true});
   }
 
+  /**
+   * Sets the open state of the infowindow to false.
+   */
   handleClose = () => {
     this.setState({open: false});
   }
-
-  
 
   /**
    * React lifecycle method.
@@ -120,15 +135,15 @@ class CustomMarker extends Component {
    * @returns {jsx} - Components ui.
    */
   render () {
-    const { delay } = this.props;
+    const { data, delay } = this.props;
     const { open } = this.state;
 
     return (
-      <Marker onClick={this.handleOpen} open={open}>
+      <Marker open={open} delay={delay * 0.02}>
         <Pulse delay={delay * 0.5}/>
-        <Inner />
+        <Inner onClick={this.handleOpen} />
         
-        {open && <InfoWindow handleClose={this.handleClose}/>}
+        {open && <InfoWindow w={150} h={125} data={data} handleClose={this.handleClose}/>}
       </Marker>
     );
   }
