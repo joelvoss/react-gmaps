@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 
+import InfoWindow from './InfoWindow';
+
+/**
+ * A circular pulse animation
+ */
 const pulse = keyframes`
   0% {
     opacity: 0;
@@ -19,6 +25,9 @@ const pulse = keyframes`
   }
 `;
 
+/**
+ * A fade in animation
+ */
 const fadeIn = keyframes`
   0% {
     opacity: 0;
@@ -28,9 +37,7 @@ const fadeIn = keyframes`
   }
 `;
 
-const Marker = styled.div.attrs({
-  'data-marker-id': props => props.markerId
-})`
+const Marker = styled.div`
   position: absolute;
   top: 0;
   right: 0;
@@ -40,13 +47,15 @@ const Marker = styled.div.attrs({
   opacity: 0;
   animation: ${fadeIn} 0.2s ease-in forwards;
   animation-delay: ${props => `${props.delay}s`};
-  pointer-events:all;
+  pointer-events: all;
 
-  transition: transform 0.07s ease-in;
+  transition: ${props => props.open ? 'transform 0s' : 'transform 0.07s ease-in'};
   backface-visibility: hidden;
+
+  z-index: ${props => props.open ? '9999' : '1'};
   
   &:hover {
-    transform: scale(1.2);
+    transform: ${props => props.open ? 'scale(1)' : 'scale(1.2)'};
     z-index: 9999;
   }
 `;
@@ -79,19 +88,50 @@ const Pulse = styled.div`
   pointer-events: none;
 `;
 
-const CustomMarker = props => {
-  const { markerId, delay } = props;
 
-  const event = () => {
-    console.log(markerId);
-  };
+class CustomMarker extends Component {
+  // PropTypes
+  static propTypes = {
+    delay: PropTypes.number.isRequired,
+    data: PropTypes.object.isRequired
+  }
 
-  return (
-    <Marker onClick={event}>
-      <Pulse delay={delay * 0.5}/>
-      <Inner />
-    </Marker>
-  );
+  // Components state.
+  state = {
+    open: false
+  }
+
+  /**
+   * Toggles the open state of the info window.
+   */
+  handleOpen = (action) => {
+    this.setState({open: true});
+  }
+
+  handleClose = () => {
+    this.setState({open: false});
+  }
+
+  
+
+  /**
+   * React lifecycle method.
+   * Renders the components ui.
+   * @returns {jsx} - Components ui.
+   */
+  render () {
+    const { delay } = this.props;
+    const { open } = this.state;
+
+    return (
+      <Marker onClick={this.handleOpen} open={open}>
+        <Pulse delay={delay * 0.5}/>
+        <Inner />
+        
+        {open && <InfoWindow handleClose={this.handleClose}/>}
+      </Marker>
+    );
+  }
 }
 
 export default CustomMarker;

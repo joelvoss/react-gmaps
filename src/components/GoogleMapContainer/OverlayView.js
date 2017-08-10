@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import CustomMarker from 'components/CustomMarker';
 
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/index';
+
 /**
  * This component represents an overlay view.
  */
 class OverlayView extends Component {
+  // PropTypes
   static propTypes = {
     google: PropTypes.object.isRequired,
     map: PropTypes.object.isRequired,
@@ -39,7 +43,7 @@ class OverlayView extends Component {
 
   /**
    * When the component unmounts, set the map of the overlayview to null.
-   * This calls the "onRemove" method of this overlayview.
+   * This calls the "onRemove" method of this class.
    */
   componentWillUnmount() {
     this.overlayView.setMap(null);
@@ -47,8 +51,13 @@ class OverlayView extends Component {
 
   /**
    * Google maps calls this method as soon as the overlayview can be drawn onto
-   * the overlay map pane. We do some react trickery here to import a stand-alone
-   * react component and append it to the appropriate google maps pane.
+   * the overlay map pane.
+   * 
+   * We create an empty wrapper element with a fixed width/height and render a custom
+   * marker component inside this wrapper element.
+   * This is a trick because the overlayview of a google map only accepts static markup an
+   * initialisation. Our wrapper element is this static markup. When the markup is
+   * added to the DOM, we inject our custom marker inside this wrapper.
    *
    * This method gets called only once!
    */
@@ -56,10 +65,13 @@ class OverlayView extends Component {
     const { data } = this.props;
 
     if (!this.overlayItem) {
-      // We create an empty DOM node
+      // We create an empty DOM node...
       this.overlayItem = this.createWrapperElement(20, 20);
+      // ...and render a custom react component inside it.
       ReactDOM.render(
-        <CustomMarker markerId={data.id} delay={Math.floor(Math.random() * 10) + 1} />,
+        <ThemeProvider theme={theme}>
+          <CustomMarker data={data} delay={Math.floor(Math.random() * 10) + 1} />
+        </ThemeProvider>,
         this.overlayItem
       );
 
@@ -113,32 +125,13 @@ class OverlayView extends Component {
    */
   createWrapperElement = (width, height) => {
     const el = document.createElement('div');
-    el.style.cssText = `position:absolute;cursor:pointer;width:${width}px;height:${height}px;pointer-events:none;`;
+    el.style.cssText = `
+      position:absolute;
+      width:${width}px;
+      height:${height}px;
+      pointer-events:none;`;
     return el;
   }
-
-  /**
-   * Helper method that normalizes a given svg string.
-   * @param {string} svgString - The raw svg string.
-   * @param {number} width - The with of the final svg.
-   * @param {number} height - The height of the final svg.
-   */
-  createSVGDataURIFromString = (svgString, width, height) => {
-    return (
-      'data:image/svg+xml,' +
-      encodeURIComponent(
-        svgString
-          .replace(/width\s*=\s*"?(\d+)"/, `width="${width}"`)
-          .replace(/height\s*=\s*"?(\d+)"/, `height="${height}"`)
-          .replace(/\n+/g, '')
-      ) // remove newlines & encode URL-unsafe characters
-        .replace(/%20/g, ' ') // put spaces back in
-        .replace(/%3D/g, '=') // ditto equals signs
-        .replace(/%3A/g, ':') // ditto colons
-        .replace(/%2F/g, '/') // ditto slashes
-        .replace(/%22/g, "'") // replace quotes with apostrophes (may break certain SVGs)
-    );
-  };
 
   render() {
     return null;
