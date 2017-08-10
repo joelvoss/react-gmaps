@@ -9,8 +9,11 @@ import nearbySearch from 'utilities/nearbySearch';
 
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
+import InfoModal from './InfoModal';
 import Map from './Map';
 import OverlayView from './OverlayView';
+
+import { GeolocationLoading, GeolocationError } from 'components/GeolocationComponents';
 
 /**
  * This component represents the Google Maps Wrapper.
@@ -23,8 +26,8 @@ class GoogleMapContainer extends Component {
     config: PropTypes.object.isRequired
   };
 
+  // Default props
   static defaultProps = {
-    config: {},
     subscriptions: []
   };
 
@@ -35,6 +38,9 @@ class GoogleMapContainer extends Component {
     google: null,
     map: null,
     position: {
+      loading: true,
+      error: false,
+      message: '',
       lat: 51.2419782,
       lng: 7.0937274
     },
@@ -56,9 +62,8 @@ class GoogleMapContainer extends Component {
         // Subscribe to the navigator.geolocation watchPosition observable
         // This observable actually never "completes", so the complete callback is omitted.
         subscriptions.push(
-          GeolocationService(config.geolocation).subscribe(
-            position => this.setState({ position }),
-            error => this.setState({ error })
+          GeolocationService(config.geolocation).subscribe(success =>
+            this.handleGeolocationSuccess(success)
           )
         );
       }
@@ -73,8 +78,7 @@ class GoogleMapContainer extends Component {
       });
 
       // Initialize all libraries, that the user specified in the config.
-      // We may need specific libraries later on, so we safe them in the
-      // usedLibraries
+      // We may need specific libraries later on, so we safe them in the usedLibraries object.
       const usedLibraries = {};
       if (config.libraries && config.libraries.indexOf('places') !== -1) {
         usedLibraries['places'] = await new google.maps.places.PlacesService(map);
@@ -139,30 +143,109 @@ class GoogleMapContainer extends Component {
     map.setCenter(position);
   };
 
+  /**
+   * Handles the success callback of the geolocationservice subscriptions and its
+   * different states (pending, success, error and complete)
+   * @param {object} action - The action object of the success callback.
+   */
+  handleGeolocationSuccess = action => {
+    switch (action.type) {
+      // Handle the pending action.
+      case 'pending':
+        this.setState(state => {
+          return {
+            position: {
+              ...state.position,
+              loading: true,
+              error: false,
+              message: action.payload
+            }
+          };
+        });
+        break;
+
+      // Handle the success action.
+      case 'success':
+        this.setState(state => {
+          return {
+            position: {
+              ...state.position,
+              ...action.payload,
+              loading: false
+            }
+          };
+        });
+        break;
+
+      // Handle the error action.
+      case 'error':
+        console.log('geolocation error');
+        this.setState(state => {
+          return {
+            position: {
+              ...state.position,
+              error: true,
+              message: action.payload
+            }
+          };
+        });
+        break;
+
+      // Handle the complete action.
+      case 'complete':
+        this.setState(state => {
+          return {
+            position: {
+              ...state.position,
+              loading: false
+            }
+          };
+        });
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  /**
+   * React lifecycle method.
+   * This method renders the actual ui.
+   * @returns {jsx} - Component UI
+   */
   render() {
     const { config } = this.props;
-    const { google, map, loading, marker } = this.state;
+    const { google, map, loading, marker, position } = this.state;
 
     return (
       <Wrapper minHeight={config.map.height}>
+        {/* Map LoadingOverlay  */}
         <LoadingOverlay show={loading} />
+
+        {/* InfoModal */}
+        <InfoModal show={position.loading}>
+          {/* A loading component for the info modal */}
+          <GeolocationLoading visible={!position.error} message={position.message} />
+          {/* A error component for the info modal */}
+          <GeolocationError visible={position.error} message={position.message} />
+        </InfoModal>
+
+        {/* The actual map component */}
         <Map innerRef={c => (this.mapRef = c)}>
-          {/* Place Marker here  */
+          {/* Place Marker here */
           marker &&
-            marker.map(m => {
-              return (
-                <OverlayView
-                  key={m.id}
-                  google={google}
-                  map={map}
-                  data={{
-                    lat: m.geometry.location.lat,
-                    lng: m.geometry.location.lng,
-                    id: m.id
-                  }}
-                />
-              );
-            })}
+            marker.map(m =>
+              <OverlayView
+                key={m.id}
+                google={google}
+                map={map}
+                data={{
+                  lat: m.geometry.location.lat,
+                  lng: m.geometry.location.lng,
+                  id: m.id
+                }}
+              />
+            )}
         </Map>
       </Wrapper>
     );

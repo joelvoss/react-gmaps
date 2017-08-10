@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Transition from 'react-transition-group/Transition';
-import Loader from 'components/LoadingOverlay/Loader';
 
 const Wrapper = styled.div`
   position: absolute;
@@ -31,75 +30,14 @@ const Inner = styled.div`
 `;
 
 /**
- * Simple loading component.
- * @param {object} props - Component properties.
- */
-const LoadingComponent = props => {
-  const LoadingWrap = styled.div`
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  `;
-
-  const SmallLoader = styled(Loader)`
-    width: 20px;
-    height: 20px;
-  `;
-
-  const LoadingText = styled.p`
-    margin: 0 1em;
-    padding: 0;
-    color: ${props => props.theme.primary};
-    font-weight: 700;
-  `;
-
-  return (
-    <LoadingWrap>
-      <SmallLoader />
-      <LoadingText>Suche Standort</LoadingText>
-    </LoadingWrap>
-  );
-};
-
-/**
- * Simple error component.
- * @param {object} props - Component properties.
- */
-const ErrorComponent = props => {
-  const ErrorWrap = styled.div`
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  `;
-
-  const ErrorText = styled.p`
-    margin: 0 1em;
-    padding: 0;
-    color: ${props => props.theme.pink};
-    font-weight: 700;
-  `;
-
-  return (
-    <ErrorWrap>
-      <ErrorText>Standortbestimmung fehlgeschlagen!</ErrorText>
-    </ErrorWrap>
-  );
-};
-
-
-/**
  * Modal component displaying the current geolocation status.
  */
 const InfoModal = props => {
-  const { loading, error } = props;
+  const { show, children } = props;
   const duration = 400; // in ms
 
-  console.log(loading || error);
-
   return (
-    <Transition in={loading || error} timeout={duration}>
+    <Transition in={show ? true : false} timeout={duration}>
       {status => {
         // if the component exited, remove it from the dom
         if (status === 'exited') {
@@ -131,8 +69,7 @@ const InfoModal = props => {
           return (
             <Wrapper style={{ ...style }}>
               <Inner>
-                {(loading && !error) && <LoadingComponent />}
-                {(loading && error) && <ErrorComponent />}
+                {children}
               </Inner>
             </Wrapper>
           );

@@ -47,6 +47,7 @@ const Marker = styled.div.attrs({
   
   &:hover {
     transform: scale(1.2);
+    z-index: 9999;
   }
 `;
 
