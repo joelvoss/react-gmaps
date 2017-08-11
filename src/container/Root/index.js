@@ -5,7 +5,7 @@ import Wrapper from './Wrapper';
 import H1 from './H1';
 import Box from './Box';
 import GoogleMapContainer from 'components/GoogleMapContainer';
-import MarkerList from 'components/MarkerList';
+import Sidebar from 'components/Sidebar';
 
 // Basic map configuration object
 const mapConfig = {
@@ -31,20 +31,20 @@ const mapConfig = {
 class Root extends Component {
   render() {
     return (
-      <Media query="(min-width: 375px)">
+      <Media query="(min-width: 415px)">
         {matches =>
           matches
             ? <Wrapper>
                 <H1>React + GMaps</H1>
                 <Box>
-                  <MarkerList />
+                  <Sidebar />
                   <GoogleMapContainer
                     config={mapConfig}
                   />
                 </Box>
               </Wrapper>
             : <p>
-                <strong>Todo:</strong>The document is at less than 375px wide.
+                <strong>Todo:</strong>The document is at less than 415px wide.
               </p>}
       </Media>
     );
