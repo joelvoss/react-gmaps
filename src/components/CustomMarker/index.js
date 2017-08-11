@@ -61,7 +61,7 @@ const Marker = styled.div`
   }
 `;
 
-const Inner = styled.div`
+const Inner = styled.div.attrs({'data-marker-inner':true})`
   position: absolute;
   top: 0;
   left: 0;
@@ -72,7 +72,6 @@ const Inner = styled.div`
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  pointer-events: auto;
 
   transition: ${props => props.open ? 'transform 0s' : 'transform 0.07s ease-in'};
 
@@ -93,7 +92,6 @@ const Pulse = styled.div`
   transform-origin: center;
   animation: ${pulse} 4s ease-in-out infinite;
   animation-delay: ${props => `${props.delay}s`};
-  pointer-events: none;
 `;
 
 
@@ -101,32 +99,7 @@ class CustomMarker extends Component {
   // PropTypes
   static propTypes = {
     delay: PropTypes.number.isRequired,
-    data: PropTypes.object.isRequired,
-    map: PropTypes.object.isRequired
-  }
-
-  // Components state.
-  state = {
-    open: false
-  }
-
-  /**
-   * Sets the open state of the infowindow to true.
-   */
-  handleOpen = () => {
-    const { data, map } = this.props;
-    
-    // pan the map to the current marker location
-    map.panTo({lat: data.geometry.location.lat, lng: data.geometry.location.lng});
-
-    this.setState({open: true});
-  }
-
-  /**
-   * Sets the open state of the infowindow to false.
-   */
-  handleClose = () => {
-    this.setState({open: false});
+    data: PropTypes.object.isRequired
   }
 
   /**
@@ -136,14 +109,17 @@ class CustomMarker extends Component {
    */
   render () {
     const { data, delay } = this.props;
-    const { open } = this.state;
+
+    if (data.infoWindowOpen) {
+      console.log('infoWindowOpen');
+    }
 
     return (
-      <Marker open={open} delay={delay * 0.02}>
+      <Marker open={data.infoWindowOpen} delay={delay * 0.02}>
         <Pulse delay={delay * 0.5}/>
-        <Inner onClick={this.handleOpen} />
+        <Inner />
         
-        {open && <InfoWindow w={150} h={125} data={data} handleClose={this.handleClose}/>}
+        {data.infoWindowOpen && <InfoWindow w={150} h={125} data={data}/>}
       </Marker>
     );
   }

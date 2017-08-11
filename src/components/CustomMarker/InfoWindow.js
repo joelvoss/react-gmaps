@@ -136,7 +136,7 @@ const Triangle = props => {
  * @param {object} props - The InfoWindow options.
  */
 const InfoWindow = props => {
-  const { data, w, h, handleClose } = props;
+  const { data, w, h } = props;
 
   return (
     <Wrapper w={w} h={h}>

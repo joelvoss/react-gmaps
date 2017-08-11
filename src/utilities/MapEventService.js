@@ -20,7 +20,6 @@ class MapEventService {
     return Observable.fromEventPattern(
       handler => this.map.addListener(type, handler),
       (handler, listener) => {
-        console.log('remove listener', listener);
         this.google.maps.event.removeListener(listener);
       }
     );

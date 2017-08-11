@@ -208,6 +208,29 @@ class GoogleMapContainer extends Component {
     }
   };
 
+  handleMapsClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log(e, 'handleMapsClick');
+  }
+
+  handleOverlayClick = markerId => {
+    const { marker } = this.state;
+
+    // iterate over each marker and
+    const index = marker.findIndex(m => m.id === markerId);
+    
+    this.setState(state => {
+      return {
+        marker: [
+          ...state.marker.slice(0, index), // everything before the clicked marker
+          {...state.marker[index], infoWindowOpen: true},
+          ...state.marker.slice(index + 1) // everything after the clicked marker
+        ]
+      };
+    });
+  }
+
   /**
    * React lifecycle method.
    * This method renders the actual ui.
@@ -231,17 +254,24 @@ class GoogleMapContainer extends Component {
         </InfoModal>
 
         {/* The actual map component */}
-        <Map innerRef={c => (this.mapRef = c)}>
+        <Map innerRef={c => (this.mapRef = c)} onClick={this.handleMapsClick}>
           {/* Place Marker here */
           marker &&
-            marker.map(m =>
-              <OverlayView
-                key={m.id}
-                google={google}
-                map={map}
-                data={m}
-              />
-            )}
+            marker.map(m => {
+              if (m.infoWindowOpen) {
+                console.log(m.id);
+              }
+              return (
+                <OverlayView
+                  key={m.id}
+                  google={google}
+                  map={map}
+                  data={m}
+                  handleOverlayClick={this.handleOverlayClick}
+                />
+              )
+            })
+          }
         </Map>
       </Wrapper>
     );

@@ -34,6 +34,8 @@ class OverlayView extends Component {
   componentDidMount() {
     const { google, map } = this.props;
 
+    console.log('overlayView componentDidMount');
+
     this.overlayView = new google.maps.OverlayView();
     this.overlayView.onAdd = this.onAdd;
     this.overlayView.draw = this.draw;
@@ -64,19 +66,25 @@ class OverlayView extends Component {
   onAdd = () => {
     const { data, map } = this.props;
 
+    console.log('onAdd');
+
     if (!this.overlayItem) {
       // We create an empty DOM node...
       this.overlayItem = this.createWrapperElement(20, 20);
       // ...and render a custom react component inside it.
       ReactDOM.render(
         <ThemeProvider theme={theme}>
-          <CustomMarker data={data} map={map} delay={Math.floor(Math.random() * 10) + 1} />
+          <CustomMarker
+            data={data}
+            map={map}
+            delay={Math.floor(Math.random() * 10) + 1}
+          />
         </ThemeProvider>,
         this.overlayItem
       );
 
       const panes = this.overlayView.getPanes();
-      panes.overlayImage.appendChild(this.overlayItem);
+      panes.floatPane.appendChild(this.overlayItem);
     }
   };
 
@@ -124,14 +132,22 @@ class OverlayView extends Component {
    * @param {number} height - The elements height.
    */
   createWrapperElement = (width, height) => {
+    const { data, handleOverlayClick } = this.props;
     const el = document.createElement('div');
     el.style.cssText = `
       position:absolute;
       width:${width}px;
-      height:${height}px;
-      pointer-events:none;`;
+      height:${height}px;`;
+
+    // add a click event to the overlay element.
+    // we render a mini-react-app inside this wrapper and every
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleOverlayClick(data.id)
+    });
     return el;
-  }
+  };
 
   render() {
     return null;
