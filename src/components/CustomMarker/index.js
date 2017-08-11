@@ -1,8 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
-
-import InfoWindow from './InfoWindow';
 
 /**
  * A circular pulse animation
@@ -41,10 +38,8 @@ const fadeIn = keyframes`
 
 const Marker = styled.div`
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
 
   transform: scale(0);
@@ -54,14 +49,13 @@ const Marker = styled.div`
   animation-delay: ${props => `${props.delay}s`};
 
   backface-visibility: hidden;
-  z-index: ${props => props.open ? '9999' : '1'};
-  
+
   &:hover {
     z-index: 9999;
   }
 `;
 
-const Inner = styled.div.attrs({'data-marker-inner':true})`
+const Inner = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -73,10 +67,10 @@ const Inner = styled.div.attrs({'data-marker-inner':true})`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
 
-  transition: ${props => props.open ? 'transform 0s' : 'transform 0.07s ease-in'};
+  transition: transform 0.07s ease-in;
 
   &:hover {
-    transform: ${props => props.open ? 'scale(1)' : 'scale(1.2)'};
+    transform: scale(1.2);
   }
 `;
 
@@ -94,35 +88,14 @@ const Pulse = styled.div`
   animation-delay: ${props => `${props.delay}s`};
 `;
 
-
-class CustomMarker extends Component {
-  // PropTypes
-  static propTypes = {
-    delay: PropTypes.number.isRequired,
-    data: PropTypes.object.isRequired
-  }
-
-  /**
-   * React lifecycle method.
-   * Renders the components ui.
-   * @returns {jsx} - Components ui.
-   */
-  render () {
-    const { data, delay } = this.props;
-
-    if (data.infoWindowOpen) {
-      console.log('infoWindowOpen');
-    }
-
-    return (
-      <Marker open={data.infoWindowOpen} delay={delay * 0.02}>
-        <Pulse delay={delay * 0.5}/>
-        <Inner />
-        
-        {data.infoWindowOpen && <InfoWindow w={150} h={125} data={data}/>}
-      </Marker>
-    );
-  }
+const CustomMarker = props => {
+  const { delay } = props;
+  return (
+    <Marker delay={delay * 0.02}>
+      <Pulse delay={delay * 0.5}/>
+      <Inner />
+    </Marker>
+  )
 }
 
 export default CustomMarker;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { GeolocationLoading, GeolocationError } from 'components/GeolocationComponents';
 
 // Google Library Service
 import GoogleLibraryService from 'utilities/GoogleLibraryService';
@@ -8,13 +9,13 @@ import GeolocationService from 'utilities/GeolocationService';
 import MapEventService from 'utilities/MapEventService';
 import nearbySearch from 'utilities/NearbySearch';
 
+// Components
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
 import InfoModal from './InfoModal';
 import Map from './Map';
-import OverlayView from './OverlayView';
-
-import { GeolocationLoading, GeolocationError } from 'components/GeolocationComponents';
+import RichMarker from './RichMarker';
+import InfoWindow from './InfoWindow';
 
 /**
  * This component represents the Google Maps Wrapper.
@@ -45,7 +46,11 @@ class GoogleMapContainer extends Component {
       lat: 51.2419782,
       lng: 7.0937274
     },
-    marker: null
+    marker: null,
+    infoWindow: {
+      data: null,
+      show: false
+    }
   };
 
   /**
@@ -209,27 +214,31 @@ class GoogleMapContainer extends Component {
     }
   };
 
-  handleMapsClick = (e) => {
+  handleMapsClick = e => {
     e.stopPropagation();
     e.preventDefault();
-    console.log(e, 'handleMapsClick');
-  }
+    console.log('handleMapsClick');
+
+    this.setState({
+      infoWindow: {
+        data: null,
+        show: false
+      }
+    });
+  };
 
   handleOverlayClick = markerId => {
-    this.setState(state => {
-      return {
-        marker: state.marker.map(m => {
-          if (m.id === markerId) {
-            m.infoWindowOpen = true;
-            return m;
-          } else {
-            m.infoWindowOpen = false;
-            return m;
-          }
-        })
-      };
+    console.log('handleOverlayClick', markerId);
+
+    const data = this.state.marker.find(m => m.id === markerId);
+
+    this.setState({
+      infoWindow: {
+        data,
+        show: true
+      }
     });
-  }
+  };
 
   /**
    * React lifecycle method.
@@ -238,7 +247,7 @@ class GoogleMapContainer extends Component {
    */
   render() {
     const { config } = this.props;
-    const { google, map, loading, marker, position } = this.state;
+    const { google, map, loading, marker, position, infoWindow } = this.state;
 
     return (
       <Wrapper minHeight={config.map.height}>
@@ -258,21 +267,18 @@ class GoogleMapContainer extends Component {
           {/* Place Marker here */
           marker &&
             marker.map(m => {
-              if (m.infoWindowOpen) {
-                console.log(m.id);
-              }
               return (
-                <OverlayView
+                <RichMarker
                   key={m.id}
                   google={google}
                   map={map}
                   data={m}
                   handleOverlayClick={this.handleOverlayClick}
                 />
-              )
-            })
-          }
+              );
+            })}
         </Map>
+        {infoWindow.show && <InfoWindow google={google} map={map} data={infoWindow.data} />}
       </Wrapper>
     );
   }

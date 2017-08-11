@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   position: absolute;
   width: ${props => `${props.w}px`};
   height: ${props => `${props.h}px`};
-  bottom: 20px;
+  bottom: 0;
   left: ${props => `-${props.w / 2 - 10}px`};
   pointer-events: auto;
 `;
@@ -135,7 +135,7 @@ const Triangle = props => {
  * This component will be exported and used inside a single marker component.
  * @param {object} props - The InfoWindow options.
  */
-const InfoWindow = props => {
+const CustomInfoWindow = props => {
   const { data, w, h } = props;
 
   return (
@@ -155,4 +155,4 @@ const InfoWindow = props => {
   );
 };
 
-export default InfoWindow;
+export default CustomInfoWindow;
