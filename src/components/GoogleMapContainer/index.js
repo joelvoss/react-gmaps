@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+
 // Google Library Service
 import GoogleLibraryService from 'utilities/GoogleLibraryService';
 import GeolocationService from 'utilities/GeolocationService';
@@ -215,18 +216,17 @@ class GoogleMapContainer extends Component {
   }
 
   handleOverlayClick = markerId => {
-    const { marker } = this.state;
-
-    // iterate over each marker and
-    const index = marker.findIndex(m => m.id === markerId);
-    
     this.setState(state => {
       return {
-        marker: [
-          ...state.marker.slice(0, index), // everything before the clicked marker
-          {...state.marker[index], infoWindowOpen: true},
-          ...state.marker.slice(index + 1) // everything after the clicked marker
-        ]
+        marker: state.marker.map(m => {
+          if (m.id === markerId) {
+            m.infoWindowOpen = true;
+            return m;
+          } else {
+            m.infoWindowOpen = false;
+            return m;
+          }
+        })
       };
     });
   }

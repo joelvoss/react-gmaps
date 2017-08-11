@@ -43,6 +43,10 @@ class OverlayView extends Component {
     this.overlayView.setMap(map);
   }
 
+  componentDidUpdate(prevState, prevProps) {
+    console.log('overlay updated');
+  }
+
   /**
    * When the component unmounts, set the map of the overlayview to null.
    * This calls the "onRemove" method of this class.
@@ -65,27 +69,23 @@ class OverlayView extends Component {
    */
   onAdd = () => {
     const { data, map } = this.props;
+    // We create an empty DOM node...
+    this.overlayItem = this.createWrapperElement(20, 20);
+    // ...and render a custom react component inside it.
+    ReactDOM.render(
+      <ThemeProvider theme={theme}>
+        <CustomMarker
+          data={data}
+          map={map}
+          delay={Math.floor(Math.random() * 10) + 1}
+        />
+      </ThemeProvider>,
+      this.overlayItem
+    );
 
-    console.log('onAdd');
+    const panes = this.overlayView.getPanes();
+    panes.floatPane.appendChild(this.overlayItem);
 
-    if (!this.overlayItem) {
-      // We create an empty DOM node...
-      this.overlayItem = this.createWrapperElement(20, 20);
-      // ...and render a custom react component inside it.
-      ReactDOM.render(
-        <ThemeProvider theme={theme}>
-          <CustomMarker
-            data={data}
-            map={map}
-            delay={Math.floor(Math.random() * 10) + 1}
-          />
-        </ThemeProvider>,
-        this.overlayItem
-      );
-
-      const panes = this.overlayView.getPanes();
-      panes.floatPane.appendChild(this.overlayItem);
-    }
   };
 
   /**
@@ -94,7 +94,6 @@ class OverlayView extends Component {
    */
   draw = () => {
     const { google, data } = this.props;
-
     const latlng = new google.maps.LatLng(data.geometry.location.lat, data.geometry.location.lng);
     const point = this.overlayView.getProjection().fromLatLngToDivPixel(latlng);
     if (point) {
