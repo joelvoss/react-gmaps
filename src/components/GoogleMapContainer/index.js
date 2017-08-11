@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import GoogleLibraryService from 'utilities/GoogleLibraryService';
 import GeolocationService from 'utilities/GeolocationService';
 import MapEventService from 'utilities/MapEventService';
-import nearbySearch from 'utilities/nearbySearch';
+import nearbySearch from 'utilities/NearbySearch';
 
 import Wrapper from './Wrapper';
 import LoadingOverlay from 'components/LoadingOverlay';
