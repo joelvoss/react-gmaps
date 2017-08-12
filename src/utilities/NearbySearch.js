@@ -33,7 +33,7 @@ const nearbySearch = options => {
             },
             // get the real image urls
             image: {
-              thumbnail: result.photos ? result.photos[0].getUrl({ maxWidth: 150 }) : result.icon,
+              thumbnail: result.photos ? result.photos[0].getUrl({ maxWidth: 100 }) : result.icon,
               medium: result.photos ? result.photos[0].getUrl({ maxWidth: 800 }) : null,
               large: result.photos ? result.photos[0].getUrl({ maxWidth: 1920 }) : null
             },

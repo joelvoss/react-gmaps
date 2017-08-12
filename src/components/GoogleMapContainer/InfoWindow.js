@@ -40,23 +40,30 @@ class InfoWindow extends Component {
   }
 
   /**
+   * On every component update event, re-render the react component.
+   * @param {object} prevProps - The previous props.
+   * @param {object} prevState - The previous state.
+   */
+  componentDidUpdate(prevProps, prevState) {
+    if (this.infoWindowItem) {
+      this.destroyReactComponent(this.infoWindowItem);
+      this.renderReactComponent(this.infoWindowItem);
+      this.draw();
+    }
+  }
+
+  /**
    * Google maps calls this method as soon as the overlayview can be drawn onto
    * the overlay map pane.
    *
    * This method gets called only once!
    */
   onAdd = () => {
-    const { data } = this.props;
-    // We create an empty DOM node...
+    // We create an empty DOM node and render a react root into this empty dom node.
     this.infoWindowItem = this.createWrapperElement();
-    // ...and render a custom react component inside it.
-    ReactDOM.render(
-      <ThemeProvider theme={theme}>
-        <CustomInfoWindow w={150} h={125} data={data} />
-      </ThemeProvider>,
-      this.infoWindowItem
-    );
-    
+    this.renderReactComponent(this.infoWindowItem);
+    // Then we append the infoWindowItem to the floatPane
+    // see https://developers.google.com/maps/documentation/javascript/reference?hl=de#MapPanes
     const panes = this.infoWindow.getPanes();
     panes.floatPane.appendChild(this.infoWindowItem);
   };
@@ -81,12 +88,31 @@ class InfoWindow extends Component {
    * dom representation.
    */
   onRemove = () => {
-    console.log('remove element');
     if (this.infoWindowItem) {
+      this.destroyReactComponent(this.infoWindowItem);
       this.infoWindowItem.parentNode.removeChild(this.infoWindowItem);
       this.infoWindowItem = null;
     }
   };
+
+  /**
+   * Renders a given react component into a specified container.
+   * @param {node} container - The dom node to render the react root into.
+   */
+  renderReactComponent = (container) => {
+    const { data } = this.props;
+
+    ReactDOM.render(
+      <ThemeProvider theme={theme}>
+        <CustomInfoWindow w={150} h={125} data={data} />
+      </ThemeProvider>,
+      container
+    );
+  }
+
+  destroyReactComponent = (container) => {
+    ReactDOM.unmountComponentAtNode(container);
+  }
 
   /**
    * Create a virtual wrapper element.

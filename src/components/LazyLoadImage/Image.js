@@ -1,13 +1,4 @@
-import styled, { keyframes } from 'styled-components';
-
-const blurIn = keyframes`
-  0% {
-    filter: blur(20px);
-  }
-  100% {
-    filter: blur(0);
-  }
-`;
+import styled from 'styled-components';
 
 export const Img = styled.div`
   position: absolute;
@@ -21,10 +12,6 @@ export const Img = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-color: #fff;
-
-  animation: ${blurIn} 1s linear;
-  /* this is needed so Safari keeps sharp edges */
-  transform: scale(1);
 `;
 
 export const BluredImg = styled.div`
@@ -40,7 +27,10 @@ export const BluredImg = styled.div`
   background-repeat: no-repeat;
   background-color: #fff;
 
-  filter: blur(20px);
+  filter: blur(10px);
+  opacity: ${props => props.loaded ? '0' : '1' };
+  transition: opacity ${props => props.animation ? '1s' : '0' };
+
   /* this is needed so Safari keeps sharp edges */
-  transform: scale(1);
+  transform: scale(1.5);
 `;

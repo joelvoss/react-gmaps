@@ -13,26 +13,36 @@ class LazyLoadImage extends Component {
     super(props);
 
     this.state = {
-      loaded: false
+      loaded: false,
+      animation: true
     };
   }
 
+  /**
+   * When the component mounts, load the image source.
+   * Only animate the image swap if the loading took longer than 100ms.
+   */
   componentDidMount() {
+    const start = Date.now();
+
     const img = new Image();
-    img.onload = () => this.setState({ loaded: true });
+    img.onload = e => {
+      const end = Date.now();
+      const diff = end - start;
+
+      this.setState({ loaded: true, animation: diff > 100 });
+    };
     img.src = this.props.src;
   }
 
   render() {
     const { placeholder, src } = this.props;
-    const { loaded } = this.state;
+    const { loaded, animation } = this.state;
 
     return (
       <Wrapper className={this.props.className}>
-        <BluredImg source={placeholder} />
-        {
-          loaded && <Img source={src} />
-        }
+        <Img source={src} />
+        <BluredImg source={placeholder} loaded={loaded} animation={animation} />
       </Wrapper>
     );
   }
