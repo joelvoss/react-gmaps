@@ -110,6 +110,10 @@ class InfoWindow extends Component {
     );
   }
 
+  /**
+   * Unmounts a react root component from the specified dom node.
+   * @param {node} container - The container from which the component should be removed.
+   */
   destroyReactComponent = (container) => {
     ReactDOM.unmountComponentAtNode(container);
   }

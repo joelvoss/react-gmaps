@@ -7,7 +7,7 @@ import { GeolocationLoading, GeolocationError } from 'components/GeolocationComp
 import GoogleLibraryService from 'utilities/GoogleLibraryService';
 import GeolocationService from 'utilities/GeolocationService';
 import MapEventService from 'utilities/MapEventService';
-import nearbySearch from 'utilities/NearbySearch';
+import nearbySearch from 'utilities/nearbySearch';
 
 // Components
 import Wrapper from './Wrapper';
@@ -102,6 +102,19 @@ class GoogleMapContainer extends Component {
               });
             })
             .catch(err => console.error(err));
+        })
+      );
+
+      const clickEvent = eventService.createEvent('click');
+      subscriptions.push(
+        clickEvent.subscribe(() => {
+          // On a map click event, close the infowindow
+          this.setState({
+            infoWindow: {
+              data: null,
+              show: false
+            }
+          });
         })
       );
 
@@ -214,24 +227,13 @@ class GoogleMapContainer extends Component {
     }
   };
 
-  handleMapsClick = e => {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log('handleMapsClick');
-
-    this.setState({
-      infoWindow: {
-        data: null,
-        show: false
-      }
-    });
-  };
-
+  /**
+   * Handles a click event on one of the markers.
+   * @param {any} markerId - The id of the clicked marker.
+   *                         Can be a string, number..or anything that represents an id.
+   */
   handleOverlayClick = markerId => {
-    console.log('handleOverlayClick', markerId);
-
     const data = this.state.marker.find(m => m.id === markerId);
-
     this.setState({
       infoWindow: {
         data,
@@ -251,10 +253,10 @@ class GoogleMapContainer extends Component {
 
     return (
       <Wrapper minHeight={config.map.height}>
-        {/* Map LoadingOverlay  */}
+        {/* Map LoadingOverlay */}
         <LoadingOverlay show={loading} />
 
-        {/* InfoModal */}
+        {/* InfoModal with status messages */}
         <InfoModal show={position.loading}>
           {/* A loading component for the info modal */}
           <GeolocationLoading visible={!position.error} message={position.message} />
@@ -263,7 +265,7 @@ class GoogleMapContainer extends Component {
         </InfoModal>
 
         {/* The actual map component */}
-        <Map innerRef={c => (this.mapRef = c)} onClick={this.handleMapsClick}>
+        <Map innerRef={c => (this.mapRef = c)}>
           {/* Place Marker here */
           marker &&
             marker.map(m => {
@@ -277,8 +279,10 @@ class GoogleMapContainer extends Component {
                 />
               );
             })}
+          {/* InfoWindow Component */}
+          {infoWindow.show && <InfoWindow google={google} map={map} data={infoWindow.data} />}
         </Map>
-        {infoWindow.show && <InfoWindow google={google} map={map} data={infoWindow.data} />}
+        
       </Wrapper>
     );
   }
