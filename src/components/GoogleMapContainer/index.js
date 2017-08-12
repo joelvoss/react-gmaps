@@ -43,10 +43,10 @@ class GoogleMapContainer extends Component {
       loading: true,
       error: false,
       message: '',
-      lat: 51.2419782,
-      lng: 7.0937274
+      lat: this.props.config.geolocation.lat,
+      lng: this.props.config.geolocation.lng
     },
-    marker: null,
+    marker: [],
     infoWindow: {
       data: null,
       show: false
@@ -97,9 +97,14 @@ class GoogleMapContainer extends Component {
         idleEvent.subscribe(() => {
           nearbySearch({ map, places: usedLibraries['places'] })
             .then(results => {
-              this.setState({
-                marker: results
+              const merged = [...this.state.marker, ...results];
+              // Iterate over the merged array and test, if the current elem
+              // is at the same pos as the found index of each inner iterated item
+              // with the same id.
+              const deduped = merged.filter((elem, pos, arr) => {
+                return (arr.findIndex(item => item.id === elem.id) === pos);
               });
+              this.setState({marker: deduped});
             })
             .catch(err => console.error(err));
         })
@@ -233,7 +238,13 @@ class GoogleMapContainer extends Component {
    *                         Can be a string, number..or anything that represents an id.
    */
   handleOverlayClick = markerId => {
+    const { map } = this.state;
     const data = this.state.marker.find(m => m.id === markerId);
+
+    // Pan the map to the clicked marker position
+    map.panTo({ lat: data.geometry.location.lat, lng: data.geometry.location.lng });
+
+    // Set the new state which displays the infoWindow
     this.setState({
       infoWindow: {
         data,
@@ -282,7 +293,6 @@ class GoogleMapContainer extends Component {
           {/* InfoWindow Component */}
           {infoWindow.show && <InfoWindow google={google} map={map} data={infoWindow.data} />}
         </Map>
-        
       </Wrapper>
     );
   }

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Wrapper from './Wrapper';
 
+import Autocomplete from 'components/Autocomplete';
+
 /**
  * This component represents a list of items.
  */
@@ -9,6 +11,7 @@ class Sidebar extends Component {
     return (
       <Wrapper>
         {/* Content */}
+        <Autocomplete />
       </Wrapper>
     );
   }
