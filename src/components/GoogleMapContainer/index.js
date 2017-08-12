@@ -275,7 +275,7 @@ class GoogleMapContainer extends Component {
                   google={google}
                   map={map}
                   data={m}
-                  handleOverlayClick={this.handleOverlayClick}
+                  handleClick={this.handleOverlayClick}
                 />
               );
             })}

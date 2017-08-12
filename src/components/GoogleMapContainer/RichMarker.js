@@ -14,7 +14,7 @@ class RichMarker extends Component {
     google: PropTypes.object.isRequired,
     map: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
-    handleOverlayClick: PropTypes.func
+    handleClick: PropTypes.func
   };
 
   /**
@@ -46,7 +46,7 @@ class RichMarker extends Component {
    * This method gets called only once!
    */
   onAdd = () => {
-    const { data, handleOverlayClick } = this.props;
+    const { data, handleClick } = this.props;
    
     const html = ReactDOMServer.renderToStaticMarkup(
       <CustomMarker delay={Math.floor(Math.random() * 10) + 1} />
@@ -54,12 +54,14 @@ class RichMarker extends Component {
 
     this.markerItem = createElementFromString(html);
 
-    // add a click event to the overlay element.
-    // we render a mini-react-app inside this wrapper and every
+    // Add a standard eventlistener for a click event of the static markup
+    // react component, since a marker is not a seperate react app.
     this.markerItem.addEventListener('click', (e) => {
+      // prevent event bubbling and propagation
       e.stopPropagation();
       e.preventDefault();
-      handleOverlayClick(data.id)
+      // execute the custom click event handler which was passed down to the overlay component.
+      handleClick(data.id)
     });
     
     const panes = this.richMarker.getPanes();
