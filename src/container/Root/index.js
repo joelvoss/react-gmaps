@@ -37,7 +37,9 @@ class Root extends Component {
             ? <Wrapper>
                 <H1>React + GMaps</H1>
                 <Box>
-                  <Sidebar />
+                  <Sidebar 
+                    config={mapConfig}
+                  />
                   <GoogleMapContainer
                     config={mapConfig}
                   />

@@ -75,7 +75,7 @@ class GoogleMapContainer extends Component {
       }
 
       // Load the google maps library
-      const google = await GoogleLibraryService(config);
+      const google = await new GoogleLibraryService(config);
 
       // Initialize the map
       const map = await new google.maps.Map(this.mapRef, {
