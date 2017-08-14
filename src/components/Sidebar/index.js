@@ -9,15 +9,22 @@ import Autocomplete from 'components/Autocomplete';
  */
 class Sidebar extends Component {
   static propTypes = {
-    config: PropTypes.object.isRequired
-  }
+    config: PropTypes.object.isRequired,
+    globalState: PropTypes.object
+  };
 
   render() {
-    const { config } = this.props;
+    const { config, globalState } = this.props;
+    const location = {
+      lat: globalState.position.lat,
+      lng: globalState.position.lng
+    };
+    const radius = globalState.position.radius;
+
     return (
       <Wrapper>
         {/* Content */}
-        <Autocomplete config={config}/>
+        <Autocomplete config={config} location={location} radius={radius} />
       </Wrapper>
     );
   }

@@ -68,7 +68,7 @@ const GeolocationService = options => {
     /**
      * Watch the users position.
      */
-    const watchId = provider.watchPosition(onSuccess, onError, {
+    const watchId = provider.getCurrentPosition(onSuccess, onError, {
       enableHighAccuracy: true,
       maximumAge: 0,
       timeout: options.timeout

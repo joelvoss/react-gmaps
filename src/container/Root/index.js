@@ -23,12 +23,40 @@ const mapConfig = {
   geolocation: {
     lat: 51.2419782,
     lng: 7.0937274,
-    timeout: 5000
+    timeout: 5000,
+    radius: 5000
   },
   libraries: ['places']
 }
 
 class Root extends Component {
+
+  // The global state of our application
+  // We could use a redux to store our global app state, but for the sake of
+  // simplicity we manage our global state by component composition.
+  state = {
+    position: {
+      lat: mapConfig.geolocation.lat,
+      lng: mapConfig.geolocation.lng,
+      radius: mapConfig.geolocation.radius
+    }
+  }
+
+  /**
+   * Global method to update the global position object.
+   * @param {object} position - The position object containing the lat and lng properties.
+   */
+  savePositionGlobally = position => {
+    this.setState(state => {
+      return {
+        globalPosition: {
+          ...state.position,
+          ...position
+        }
+      };
+    });
+  }
+
   render() {
     return (
       <Media query="(min-width: 415px)">
@@ -39,9 +67,11 @@ class Root extends Component {
                 <Box>
                   <Sidebar 
                     config={mapConfig}
+                    globalState={this.state}
                   />
                   <GoogleMapContainer
                     config={mapConfig}
+                    savePositionGlobally={this.savePositionGlobally}
                   />
                 </Box>
               </Wrapper>

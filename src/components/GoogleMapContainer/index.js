@@ -25,12 +25,14 @@ import InfoWindow from './InfoWindow';
 class GoogleMapContainer extends Component {
   // PropTypes
   static propTypes = {
-    config: PropTypes.object.isRequired
+    config: PropTypes.object.isRequired,
+    savePositionGlobally: PropTypes.func
   };
 
   // Default props
   static defaultProps = {
-    subscriptions: []
+    subscriptions: [],
+    savePositionGlobally: () => {}
   };
 
   // State
@@ -173,6 +175,7 @@ class GoogleMapContainer extends Component {
    * @param {object} action - The action object of the success callback.
    */
   handleGeolocationSuccess = action => {
+    const { savePositionGlobally } = this.props;
     switch (action.type) {
       // Handle the pending action.
       case 'pending':
@@ -191,6 +194,7 @@ class GoogleMapContainer extends Component {
       // Handle the success action.
       case 'success':
         this.setState(state => {
+          savePositionGlobally({...action.payload});
           return {
             position: {
               ...state.position,
