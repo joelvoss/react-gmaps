@@ -5,7 +5,7 @@ const SearchBox = styled.div`
   display: flex;
   flex-direction: row;
   width: calc(100% - 1rem);
-  padding: 0.5rem;
+  margin: 0.5rem;
 `;
 
 export default SearchBox;

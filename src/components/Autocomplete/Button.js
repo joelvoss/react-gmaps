@@ -3,9 +3,9 @@ import styled from 'styled-components';
 const Button = styled.div`
   font-size: 1rem;
   padding: 0.7em 1em;
-  background: ${props => props.theme.white};
+  background: ${props => props.theme.secondary};
   color: ${props => props.theme.primary};
-  border: 1px solid ${props => props.theme.white};
+  border: 1px solid ${props => props.theme.secondary};
 
   border-radius: 3px;
   border-top-left-radius: 0;

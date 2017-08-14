@@ -37,43 +37,37 @@ const InfoModal = props => {
   const duration = 400; // in ms
 
   return (
-    <Transition in={show ? true : false} timeout={duration}>
+    <Transition in={show ? true : false} timeout={duration} mountOnEnter={true} unmountOnExit={true}>
       {status => {
-        // if the component exited, remove it from the dom
-        if (status === 'exited') {
-          return null;
-          // on all other transition states, set the animation property
-        } else {
-          const style = {
-            opacity: 0,
-            transition: `all ${duration}ms ease-in-out`
-          };
-          switch (status) {
-            case 'entering':
-              style.transform = 'translateY(-50%)';
-              style.opacity = 0;
-              break;
-            case 'entered':
-              style.transform = 'translateY(0)';
-              style.opacity = 1;
-              break;
-            case 'exiting':
-              style.transform = 'translateY(-50%)';
-              style.opacity = 0;
-              break;
-            default:
-              style.transform = 'translateY(-50%)';
-              style.opacity = 0;
-              break;
-          }
-          return (
-            <Wrapper style={{ ...style }}>
-              <Inner>
-                {children}
-              </Inner>
-            </Wrapper>
-          );
+        const style = {
+          opacity: 0,
+          transition: `all ${duration}ms ease-in-out`
+        };
+        switch (status) {
+          case 'entering':
+            style.transform = 'translateY(-50%)';
+            style.opacity = 0;
+            break;
+          case 'entered':
+            style.transform = 'translateY(0)';
+            style.opacity = 1;
+            break;
+          case 'exiting':
+            style.transform = 'translateY(-50%)';
+            style.opacity = 0;
+            break;
+          default:
+            style.transform = 'translateY(-50%)';
+            style.opacity = 0;
+            break;
         }
+        return (
+          <Wrapper style={{ ...style }}>
+            <Inner>
+              {children}
+            </Inner>
+          </Wrapper>
+        );
       }}
     </Transition>
   );
