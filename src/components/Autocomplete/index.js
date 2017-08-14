@@ -4,9 +4,10 @@ import debounce from 'lodash/debounce';
 
 import GoogleLibraryService from 'utilities/GoogleLibraryService';
 
-import Wrapper from './Wrapper';
+import SearchBox from './SearchBox';
 import Input from './Input';
 import Button from './Button';
+import SuggestList from './SuggestList';
 
 class Autocomplete extends Component {
   static propTypes = {
@@ -31,7 +32,8 @@ class Autocomplete extends Component {
     geocoder: null,
     isLoading: false,
     isSuggestsHidden: true,
-    activeSuggest: null
+    activeSuggest: null,
+    suggests: []
   };
 
   async componentDidMount() {
@@ -201,16 +203,46 @@ class Autocomplete extends Component {
 
   updateSuggests = suggests => {
     console.log('suggests', suggests);
-    this.setState({ isLoading: false });
+    
+
+    const normalizedSuggests = [];
+    if (suggests) {
+      for(let i = 0; i < suggests.length; i++) {
+        normalizedSuggests.push({
+          description: suggests[i].description,
+          placeId: suggests[i].place_id,
+          matchedSubstrings: suggests[i].matched_substrings[0]
+        });
+      }
+    }
+
+    this.setState({
+      isLoading: false,
+      suggests: normalizedSuggests
+    });
+    
+  //   suggests.forEach(suggest => {
+  //     if (!skipSuggest(suggest)) {
+  //       suggests.push({
+  //         description: suggest.description,
+  //         label: this.props.getSuggestLabel(suggest),
+  //         placeId: suggest.place_id,
+  //         isFixture: false,
+  //         matchedSubstrings: suggest.matched_substrings[0]
+  //       });
+  //     }
+  //   });
+
+  // activeSuggest = this.updateActiveSuggest(suggests);
+  
+
   };
 
   render() {
-    const { userInput, isLoading } = this.state;
-
-    console.log('component is loading?', isLoading);
+    const { userInput, isLoading, suggests } = this.state;
 
     return (
-      <Wrapper>
+      <SearchBox>
         <Input
           type="text"
           placeholder="Auf der Karte suchen"
@@ -220,7 +252,8 @@ class Autocomplete extends Component {
           onBlur={this.onInputBlur}
         />
         <Button />
-      </Wrapper>
+        <SuggestList suggests={suggests} />
+      </SearchBox>
     );
   }
 }

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Wrapper = styled.div`
+const SearchBox = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
@@ -8,4 +8,4 @@ const Wrapper = styled.div`
   padding: 0.5rem;
 `;
 
-export default Wrapper;
+export default SearchBox;
