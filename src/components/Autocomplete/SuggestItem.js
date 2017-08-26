@@ -4,17 +4,31 @@ import styled from 'styled-components';
 import Transition from 'react-transition-group/Transition';
 
 const Wrapper = styled.li`
+  display: block;
+  width: 100%;
+  margin: 0;
   padding: 0.3em 0.5em;
   font-size: 1rem;
   color: ${props => props.theme.primary};
   background: ${props => props.theme.white};
   border-left: 1px solid ${props => props.theme.secondary};
   border-right: 1px solid ${props => props.theme.secondary};
+  border-bottom: 1px solid transparent;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   cursor: pointer;
 
   &:hover {
     background: ${props => props.theme.lightPink};
+  }
+
+  &:last-child {
+    border-bottom: 2px solid ${props => props.theme.secondary};
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
   }
 `;
 

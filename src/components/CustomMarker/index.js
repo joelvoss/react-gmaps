@@ -59,8 +59,8 @@ const Inner = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   background: #ed2461;
   border: 3px solid #fbd4e1;
   border-radius: 50%;

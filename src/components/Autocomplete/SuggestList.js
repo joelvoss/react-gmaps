@@ -13,13 +13,6 @@ const Wrapper = styled.ul`
   margin: 0;
   padding: 0;
   list-style: none;
-
-  & li:last-child {
-    border-bottom: 1px solid ${props => props.theme.secondary};
-    border-radius: 3px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
 `;
 
 /**
