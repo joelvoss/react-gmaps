@@ -6,18 +6,7 @@ import Transition from 'react-transition-group/Transition';
 const Wrapper = styled.li`
   display: block;
   width: 100%;
-  font-size: 1rem;
-  margin: 0;
-  padding: 0.3em;
   background: ${props => props.theme.colors.default.white};
-  border-left: 1px solid ${props => props.theme.colors.default.secondary};
-  border-right: 1px solid ${props => props.theme.colors.default.secondary};
-  border-bottom: 1px solid transparent;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
   cursor: pointer;
 
   &:hover {
@@ -25,15 +14,30 @@ const Wrapper = styled.li`
   }
 
   &:last-child {
-    border-bottom: 2px solid ${props => props.theme.colors.default.secondary};
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
   }
 `;
 
+const Inner = styled.span`
+  display: block;
+  width: 100%;
+
+  font-size: 1rem;
+  padding: 0.3em;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const MainText = styled.span`
   padding: 0 0.2em;
   color: ${props => props.theme.colors.default.primary};
+
+  & > b {
+    font-weight: 700;
+  }
 `;
 
 const SecondaryText = styled.span`
@@ -48,9 +52,37 @@ class SuggestItem extends PureComponent {
     handleIgnoreBlur: PropTypes.func.isRequired
   };
 
+  /**
+   * Format the matched substring provided by google
+   * @return {String} Formatted string with highlighted matched text
+   */
+  formattedMainText = () => {
+    const { suggest } = this.props;
+
+    if (!suggest.matchedSubstrings) {
+      return suggest.mainText;
+    }
+
+    const start = suggest.matchedSubstrings.offset;
+    const length = suggest.matchedSubstrings.length;
+    const end = start + length;
+    
+    const pre = (start > 0) ? suggest.mainText.slice(0, start) : '';
+    const matchedSubstring = suggest.mainText.substring(start, end);
+    const post = (end < suggest.mainText.length) ? suggest.mainText.slice(end) : '';
+
+    return {
+      pre,
+      matchedSubstring,
+      post
+    };
+  };
+
   render() {
     const { suggest, handleIgnoreBlur } = this.props;
     const duration = 250; // in ms
+
+    const formattedString = this.formattedMainText();
 
     return (
       <Transition in={this.props.in} timeout={duration} mountOnEnter={true} unmountOnExit={true}>
@@ -82,8 +114,14 @@ class SuggestItem extends PureComponent {
               style={{ ...style }}
               onMouseDown={() => handleIgnoreBlur(true)}
             >
-              <MainText>{suggest.mainText}</MainText>
-              <SecondaryText>{suggest.secondaryText}</SecondaryText>
+              <Inner>
+                <MainText>
+                  {formattedString.pre}
+                  <b>{formattedString.matchedSubstring}</b>
+                  {formattedString.post}
+                </MainText>
+                <SecondaryText>{suggest.secondaryText}</SecondaryText>
+              </Inner>
             </Wrapper>
           );
         }}
