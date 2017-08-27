@@ -23,7 +23,7 @@ const Inner = styled.div`
   font-size: 0.8rem;
 
   border-radius: 30px;
-  background: ${props => props.theme.lightGrey};
+  background: ${props => props.theme.colors.default.lightGrey};
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 
   pointer-events: all;

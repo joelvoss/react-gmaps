@@ -22,7 +22,7 @@ export const GeolocationLoading = props => {
   const LoadingText = styled.p`
     margin: 0 1em;
     padding: 0;
-    color: ${props => props.theme.primary};
+    color: ${props => props.theme.colors.default.primary};
     font-weight: 700;
   `;
 
@@ -49,12 +49,12 @@ export const GeolocationError = props => {
   const ErrorText = styled.p`
     margin: 0 1em;
     padding: 0;
-    color: ${props => props.theme.pink};
+    color: ${props => props.theme.colors.default.pink};
     font-weight: 700;
 
     a {
       font-weight: 400;
-      color: ${props => props.theme.pink};
+      color: ${props => props.theme.colors.default.pink};
     }
   `;
 

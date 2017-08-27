@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
@@ -21,15 +22,25 @@ const Wrapper = styled.ul`
  * @return {JSX} The icon component.
  */
 class SuggestList extends Component {
+  static propTypes = {
+    handleIgnoreBlur: PropTypes.func.isRequired
+  };
+
   render() {
-    const { suggests, isHidden } = this.props;
-    const hidden = !suggests.length || isHidden;
+    const { suggests, isHidden, handleIgnoreBlur } = this.props;
+    const hidden = (!suggests.length || isHidden) ? true : false;
 
     return (
       <TransitionGroup component={Wrapper}>
-        {suggests &&
+        {suggests && !hidden &&
           suggests.map((suggest, i) => {
-            return <SuggestItem key={i} suggest={suggest} />;
+            return (
+              <SuggestItem
+                key={i}
+                suggest={suggest}
+                handleIgnoreBlur={handleIgnoreBlur}
+              />
+            );
           })}
       </TransitionGroup>
     );

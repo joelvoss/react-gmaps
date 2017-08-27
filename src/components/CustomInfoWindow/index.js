@@ -27,7 +27,7 @@ const Content = styled.div`
   height: 100%;
   cursor: initial;
   border-radius: 6px;
-  background: ${props => props.theme.lightGrey};
+  background: ${props => props.theme.colors.default.lightGrey};
 
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 `;
@@ -38,11 +38,11 @@ const Content = styled.div`
  */
 const Image = styled(LazyLoadImage)`
   position: absolute;
-  top: ${props => `-${props.w / 3}px`};
-  left: 10px;
+  top: ${props => `-${props.h / 3}px`};
+  left: 14px;
   width: ${props => `${props.w - 28}px`};
   height: ${props => `${props.w - 28}px`};
-  border: 4px solid ${props => props.theme.white};
+  border: 4px solid ${props => props.theme.colors.default.white};
   border-radius: 50%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 `;
@@ -57,13 +57,13 @@ const Block = styled.div`
 `;
 
 const Headline = styled.h1`
-  width: calc(100% - 1em);
+  width: 100%;
   font-size: 1em;
   padding: 0 0.5em;
   margin: 0;
 
   text-align: center;
-  color: ${props => props.theme.primary};
+  color: ${props => props.theme.colors.default.primary};
 
   white-space: nowrap;
   overflow: hidden;
@@ -72,7 +72,7 @@ const Headline = styled.h1`
 
 const Open = styled.span`
   display: block;
-  width: calc(100% - 1em);
+  width: 100%;
   font-size: 1em;
   padding: 0 0.5em;
   margin: 0.1em 0 0.5em 0;
@@ -115,7 +115,7 @@ const TDown = styled.div`
   height: 0;
   border-style: solid;
   border-width: ${props => `${props.h}px ${props.w / 2}px 0 ${props.w / 2}px`};
-  border-color: ${props => `${props.theme.lightGrey} transparent transparent transparent`};
+  border-color: ${props => `${props.theme.colors.default.lightGrey} transparent transparent transparent`};
 `;
 
 /**

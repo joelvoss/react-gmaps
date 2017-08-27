@@ -4,9 +4,9 @@ const Input = styled.input`
   flex: 1;
   font-size: 1rem;
   padding: 0.7em 1em;
-  background: ${props => props.theme.white};
-  color: ${props => props.theme.primary};
-  border: 1px solid ${props => props.theme.white};
+  background: ${props => props.theme.colors.default.white};
+  color: ${props => props.theme.colors.default.primary};
+  border: 1px solid ${props => props.theme.colors.default.white};
   outline: none;
 
   border-radius: 3px;
@@ -21,7 +21,7 @@ const Input = styled.input`
   -webkit-tap-highlight-color: rgba(255,255,255,0);
 
   &:focus {
-    border: 1px solid ${props => props.theme.secondary};
+    border: 1px solid ${props => props.theme.colors.default.secondary};
   }
 `;
 

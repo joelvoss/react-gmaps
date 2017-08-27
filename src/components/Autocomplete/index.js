@@ -33,6 +33,7 @@ class Autocomplete extends Component {
     isLoading: false,
     isSuggestsHidden: true,
     activeSuggest: null,
+    ignoreBlur: false,
     suggests: []
   };
 
@@ -72,19 +73,27 @@ class Autocomplete extends Component {
   }, this.props.queryDelay);
 
   /**
-   * When the input gets focused
+   * When the input gets focused, show the suggest box
    */
   onInputFocus = () => {
     this.showSuggests();
   };
 
   /**
-   * When the input gets blurred
+   * When the input gets blurred, conditionally hide the suggest box
+   * if we dont ignore the blur event, e.g. when we select a suggest-item.
    */
   onInputBlur = () => {
-    if (!this.state.ignoreBlur) {
+    console.log('onInputBlur');
+    const { ignoreBlur } = this.state;
+    if (!ignoreBlur) {
       this.hideSuggests();
     }
+  };
+
+  handleIgnoreBlur = ignoreBlur => {
+    console.log('handleIgnoreBlur', ignoreBlur);
+    this.setState({ ignoreBlur });
   };
 
   showSuggests = () => {
@@ -97,6 +106,7 @@ class Autocomplete extends Component {
    * Hide the suggestions
    */
   hideSuggests = () => {
+    console.log('hideSuggests');
     this.timer = setTimeout(() => {
       this.setState({
         isSuggestsHidden: true,
@@ -202,16 +212,18 @@ class Autocomplete extends Component {
   };
 
   updateSuggests = suggests => {
-    console.log('suggests', suggests);
-    
+    console.log('updateSuggests');
 
     const normalizedSuggests = [];
     if (suggests) {
-      for(let i = 0; i < suggests.length; i++) {
+      for (let i = 0; i < suggests.length; i++) {
+        console.log(suggests[i]);
         normalizedSuggests.push({
+          mainText: suggests[i].structured_formatting.main_text,
+          secondaryText: suggests[i].structured_formatting.secondary_text,
+          matchedSubstrings: suggests[i].structured_formatting.main_text_matched_substrings[0],
           description: suggests[i].description,
-          placeId: suggests[i].place_id,
-          matchedSubstrings: suggests[i].matched_substrings[0]
+          placeId: suggests[i].place_id
         });
       }
     }
@@ -220,26 +232,24 @@ class Autocomplete extends Component {
       isLoading: false,
       suggests: normalizedSuggests
     });
-    
-  //   suggests.forEach(suggest => {
-  //     if (!skipSuggest(suggest)) {
-  //       suggests.push({
-  //         description: suggest.description,
-  //         label: this.props.getSuggestLabel(suggest),
-  //         placeId: suggest.place_id,
-  //         isFixture: false,
-  //         matchedSubstrings: suggest.matched_substrings[0]
-  //       });
-  //     }
-  //   });
 
-  // activeSuggest = this.updateActiveSuggest(suggests);
-  
+    //   suggests.forEach(suggest => {
+    //     if (!skipSuggest(suggest)) {
+    //       suggests.push({
+    //         description: suggest.description,
+    //         label: this.props.getSuggestLabel(suggest),
+    //         placeId: suggest.place_id,
+    //         isFixture: false,
+    //         matchedSubstrings: suggest.matched_substrings[0]
+    //       });
+    //     }
+    //   });
 
+    // activeSuggest = this.updateActiveSuggest(suggests);
   };
 
   render() {
-    const { userInput, isLoading, suggests } = this.state;
+    const { userInput, isLoading, suggests, isSuggestsHidden } = this.state;
 
     return (
       <SearchBox>
@@ -251,8 +261,12 @@ class Autocomplete extends Component {
           onFocus={this.onInputFocus}
           onBlur={this.onInputBlur}
         />
-        <Button />
-        <SuggestList suggests={suggests} />
+        <Button showSuggests={this.showSuggests} handleIgnoreBlur={this.handleIgnoreBlur} />
+        <SuggestList
+          suggests={suggests}
+          isHidden={isSuggestsHidden}
+          handleIgnoreBlur={this.handleIgnoreBlur}
+        />
       </SearchBox>
     );
   }

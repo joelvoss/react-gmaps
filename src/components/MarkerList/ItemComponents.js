@@ -7,7 +7,7 @@ export const Item = styled.li.attrs({
   margin: 0.75rem;
   padding: 0.5em 1em;
   cursor: pointer;
-  background-color: ${props => props.theme.white};
+  background-color: ${props => props.theme.colors.default.white};
   border-radius: 6px;
   box-shadow: ${props => (props.hovered ? '0 3px 6px rgba(0,0,0,0.2)' : '0 2px 6px rgba(0,0,0,0.1)')} ;
 
@@ -44,7 +44,7 @@ export const Title = styled.h2`
   padding: 0;
   margin: 0 0 0.5em 0;
   pointer-events: none;
-  color: ${props => props.theme.primary};
+  color: ${props => props.theme.colors.default.primary};
 `;
 
 export const Location = styled.span`
@@ -53,7 +53,7 @@ export const Location = styled.span`
   padding: 0;
   margin: 0 0 0.5em 0;
   pointer-events: none;
-  color: ${props => props.theme.secondary};
+  color: ${props => props.theme.colors.default.secondary};
 `;
 
 export const Open = styled.span`

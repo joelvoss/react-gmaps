@@ -6,7 +6,7 @@ const Wrapper = styled.ul`
   flex: 0 0 40%;
   margin: 0;
   padding: 0;
-  background-color: ${props => props.theme.lightGrey};
+  background-color: ${props => props.theme.colors.default.lightGrey};
 
   box-shadow: 4px 0 6px rgba(0, 0, 0, 0.1);
   z-index: 1;
