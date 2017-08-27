@@ -1,9 +1,11 @@
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
+  position: relative;
+  overflow: hidden;
+  background-color: #f6f6f6;
   width: 100%;
-  max-width: 1080px;
-  margin: 0 auto;
+  height: 100%;
 `;
 
 export default Wrapper;

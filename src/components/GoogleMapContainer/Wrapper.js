@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  width: 100%;
-  max-width: 1080px;
-  margin: 0 auto;
+  flex: 1;
+  position: relative;
+  min-height: ${props => props.minHeight}px;
 `;
 
 export default Wrapper;
